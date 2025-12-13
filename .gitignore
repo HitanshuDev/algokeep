@@ -1,0 +1,71 @@
+# ===============================
+# OS / Editor
+# ===============================
+.DS_Store
+Thumbs.db
+*.log
+
+# ===============================
+# Environment variables
+# ===============================
+.env
+.env.*
+!.env.example
+
+# ===============================
+# Node / JS (Frontend & Backend)
+# ===============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ===============================
+# Next.js (Frontend)
+# ===============================
+frontend/.next/
+frontend/out/
+frontend/.vercel/
+frontend/.turbo/
+
+# ===============================
+# React / Vite (if used)
+# ===============================
+frontend/dist/
+
+# ===============================
+# Backend (Node / Python)
+# ===============================
+backend/node_modules/
+
+# Python
+backend/venv/
+backend/.venv/
+backend/__pycache__/
+backend/*.pyc
+
+# ===============================
+# Build outputs
+# ===============================
+build/
+dist/
+
+# ===============================
+# Database
+# ===============================
+*.sqlite
+*.db
+
+# ===============================
+# Testing / Coverage
+# ===============================
+coverage/
+.playwright/
+.cypress/
+
+# ===============================
+# Misc
+# ===============================
+.cache/
+.temp/
