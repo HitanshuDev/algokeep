@@ -1,3 +1,4 @@
+'use client';
 import { Filter, SortAsc, LayoutGrid, List } from 'lucide-react';
 import { useState } from 'react';
 
