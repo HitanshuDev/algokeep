@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { BrandingPanel } from '@/components/signup/branding-panel';
-import { SignUpForm } from '@/components/signup/sign-up-form';
+import { SignInForm } from '@/components/signup/sign-in-form';
 
 export default function App() {
   return (
@@ -36,7 +36,7 @@ export default function App() {
         </div>
 
         {/* Sign In Form */}
-        <SignUpForm />
+        <SignInForm />
       </div>
 
       {/* Floating particles effect */}
