@@ -29,7 +29,7 @@ export function Navbar() {
           
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="outline" size="sm">Sign In</Button>
+            <Button href='/signup' variant="outline" size="sm">Sign In</Button>
             <Button variant="tertiary" size="sm">Get Started</Button>
           </div>
           

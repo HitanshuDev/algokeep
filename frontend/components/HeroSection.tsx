@@ -43,11 +43,11 @@ export function HeroSection() {
             
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="tertiary" size="lg" className="group">
+              <Button href='/signup' variant="tertiary" size="lg" className="group">
                 Start Now
                 <Zap className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
               </Button>
-              <Button variant="outline" size="lg">
+              <Button href='/demo' variant="outline" size="lg">
                 View Demo
               </Button>
             </div>

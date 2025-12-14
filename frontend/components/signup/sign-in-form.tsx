@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { Input } from './input';
 import { Button } from './button';
+import { useRouter } from 'next/navigation';
 import { Mail, Lock, Github } from 'lucide-react';
 
 export const SignInForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setError] = useState<{ email?: string; password?: string }>({});
+  const navigate = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e : React.FormEvent) => {
     e.preventDefault();
-    
+      
     // Simple validation
     const newErrors: { email?: string; password?: string } = {};
     
@@ -26,14 +28,56 @@ export const SignInForm: React.FC = () => {
     } else if (password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
-    
-    setErrors(newErrors);
-    
-    if (Object.keys(newErrors).length === 0) {
-      console.log('Sign in with:', { email, password, rememberMe });
-      // Handle sign in logic here
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || 'Login failed');
+      } else {
+        // Save token in localStorage or state
+        localStorage.setItem('token', data.token);
+        // onLogin(data.email);
+        navigate.push('/notes');
+      }
+    } catch (err) {
+      console.log(err);
+      // setError('Network error');
     }
   };
+
+
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+    
+  //   // Simple validation
+  //   const newErrors: { email?: string; password?: string } = {};
+    
+  //   if (!email) {
+  //     newErrors.email = 'Email is required';
+  //   } else if (!/\S+@\S+\.\S+/.test(email)) {
+  //     newErrors.email = 'Please enter a valid email';
+  //   }
+    
+  //   if (!password) {
+  //     newErrors.password = 'Password is required';
+  //   } else if (password.length < 6) {
+  //     newErrors.password = 'Password must be at least 6 characters';
+  //   }
+    
+  //   setErrors(newErrors);
+    
+  //   if (Object.keys(newErrors).length === 0) {
+  //     console.log('Sign in with:', { email, password, rememberMe });
+  //     // Handle sign in logic here
+  //   }
+  // };
 
   const handleGithubSignIn = () => {
     console.log('Sign in with GitHub');
