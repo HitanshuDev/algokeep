@@ -29,7 +29,7 @@ export function NoteDetailView({ note, onClose }: NoteDetailViewProps) {
   if (!note) return null;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(note.Code);
+    navigator.clipboard.writeText(note.fullCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -59,16 +59,16 @@ export function NoteDetailView({ note, onClose }: NoteDetailViewProps) {
                 {note.language}
               </span>
               <span className="px-3 py-1.5 rounded-lg text-sm bg-accent/20 text-accent border border-accent/30">
-                {note.topic ?? 'Unknown'}
+                {note.topic}
               </span>
               {note.difficulty && (
                 <span className="px-3 py-1.5 rounded-lg text-sm bg-secondary text-foreground border border-border/50">
-                  {note.difficulty }
+                  {note.difficulty}
                 </span>
               )}
               <span className="px-3 py-1.5 rounded-lg text-sm bg-secondary text-muted-foreground border border-border/50 flex items-center gap-2">
                 <Clock className="w-3.5 h-3.5" />
-                {note.lastEdited ?? 'Unknown'}
+                {note.lastEdited}
               </span>
             </div>
           </div>
@@ -125,7 +125,7 @@ export function NoteDetailView({ note, onClose }: NoteDetailViewProps) {
 
               <div className="p-6 pt-12 overflow-x-auto">
                 <pre className="text-sm text-foreground font-mono leading-relaxed">
-                  <code>{note.code}</code>
+                  <code>{note.fullCode}</code>
                 </pre>
               </div>
             </div>

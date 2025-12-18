@@ -39,7 +39,7 @@ export function NotesGrid({ notes, viewMode, onNoteClick }: NotesGridProps) {
       }
     >
       {notes.map((note) => (
-        <NoteCard key={note._id} note={note} onClick={() => onNoteClick(note)} />
+        <NoteCard key={note.id} note={note} onClick={() => onNoteClick(note)} />
       ))}
     </div>
   );

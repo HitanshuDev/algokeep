@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/notes/Navbar';
 import { Sidebar } from '@/components/notes/Sidebar';
 import { FilterBar } from '@/components/notes/FilterBar';
@@ -244,10 +244,36 @@ The use of a hash map makes the solution clean and extensible to any number of b
 ];
 
 export default function App() {
+const [notes, setNotes] = useState<typeof mockNotes>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedNote, setSelectedNote] = useState<typeof mockNotes[0] | null>(null);
   const [mobileTab, setMobileTab] = useState('all');
+
+  const token = localStorage.getItem('token');
+//   console.log('Token:', token);
+
+    //fetch notes on component mount
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notes`, {
+          headers : {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        const data = await res.json();
+        if(!res.ok) throw new Error(data.message || 'Failed to fetch notes');
+        console.log(data.notes);
+        setNotes(data.notes);
+      }catch(err){
+        setError(err.message);
+      }
+    };
+
+    fetchNotes();
+  }, [token]);
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -277,7 +303,7 @@ export default function App() {
 
             {/* Notes Grid */}
             <NotesGrid
-              notes={mockNotes}
+              notes={notes}
               viewMode={viewMode}
               onNoteClick={setSelectedNote}
             />

@@ -1,11 +1,11 @@
 'use client';
 import { useState } from 'react';
-import { Navbar } from '@/components/notes/Navbar';
-import { Sidebar } from '@/components/notes/Sidebar';
-import { FilterBar } from '@/components/notes/FilterBar';
-import { NotesGrid } from '@/components/notes/NotesGrid';
-import { NoteDetailView } from '@/components/notes/NoteDetailView';
-import { MobileBottomNav } from '@/components/notes/MobileBottomNav';
+import { Navbar } from '@/demo_comps/notes/Navbar';
+import { Sidebar } from '@/demo_comps/notes/Sidebar';
+import { FilterBar } from '@/demo_comps/notes/FilterBar';
+import { NotesGrid } from '@/demo_comps/notes/NotesGrid';
+import { NoteDetailView } from '@/demo_comps/notes/NoteDetailView';
+import { MobileBottomNav } from '@/demo_comps/notes/MobileBottomNav';
 
 // Mock data for demonstration
 const mockNotes = [

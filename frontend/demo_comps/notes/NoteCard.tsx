@@ -7,9 +7,9 @@ interface NoteCardProps {
     title: string;
     language: string;
     topic: string;
-    code: string;
+    codePreview: string;
     isFavorite: boolean;
-    difficulty?: 'Easy' | 'Medium' | 'Hard' ;
+    difficulty?: 'Easy' | 'Medium' | 'Hard';
     lastEdited: string;
   };
   onClick: () => void;
@@ -81,7 +81,7 @@ export function NoteCard({ note, onClick }: NoteCardProps) {
       <div className="relative mb-4 overflow-hidden rounded-lg bg-black/40 border border-border/30">
         <div className="p-3 overflow-x-auto">
           <pre className="text-xs line-clamp-6 text-muted-foreground font-mono leading-relaxed">
-            <code>{note.code}</code>
+            <code>{note.codePreview}</code>
           </pre>
         </div>
         <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
