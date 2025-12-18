@@ -6,6 +6,7 @@ import { FilterBar } from '@/components/notes/FilterBar';
 import { NotesGrid } from '@/components/notes/NotesGrid';
 import { NoteDetailView } from '@/components/notes/NoteDetailView';
 import { MobileBottomNav } from '@/components/notes/MobileBottomNav';
+import { AddNoteModal, NoteFormData } from '@/components/notes/AddNoteModal';
 
 // Mock data for demonstration
 const mockNotes = [
@@ -244,11 +245,37 @@ The use of a hash map makes the solution clean and extensible to any number of b
 ];
 
 export default function App() {
-const [notes, setNotes] = useState<typeof mockNotes>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedNote, setSelectedNote] = useState<typeof mockNotes[0] | null>(null);
   const [mobileTab, setMobileTab] = useState('all');
+  const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
+  const [notes, setNotes] = useState([]);
+
+  const handleSaveNote = (formData: NoteFormData) => {
+    // Create new note from form data
+    const newNote = {
+      id: String(notes.length + 1),
+      title: formData.title,
+      language: formData.language as string,
+      topic: 'General', // Could be derived from approach or set separately
+      codePreview: formData.code.split('\n').slice(0, 6).join('\n') + '\n    ...',
+      fullCode: formData.code,
+      explanation: formData.approach,
+      isFavorite: false,
+      difficulty: formData.difficulty as string,
+      lastEdited: 'Just now',
+      timeComplexity: formData.timeComplexity,
+      spaceComplexity: formData.spaceComplexity,
+      description: formData.description
+    };
+
+    setNotes([newNote, ...notes]);
+    toast.success('Note saved successfully!', {
+      description: `"${formData.title}" has been added to your collection.`,
+      duration: 3000,
+    });
+  };
 
   const token = localStorage.getItem('token');
 //   console.log('Token:', token);
@@ -283,7 +310,7 @@ const [notes, setNotes] = useState<typeof mockNotes>([]);
       {/* Main Layout */}
       <div className="flex">
         {/* Sidebar */}
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} onAddNote={() => setIsAddNoteModalOpen(true)}/>
 
         {/* Main Content */}
         <main className="flex-1 min-h-[calc(100vh-4rem)] pb-20 lg:pb-0">
@@ -316,6 +343,13 @@ const [notes, setNotes] = useState<typeof mockNotes>([]);
 
       {/* Note Detail View Modal */}
       <NoteDetailView note={selectedNote} onClose={() => setSelectedNote(null)} />
+
+        {/* Add Note Modal */}
+      <AddNoteModal
+        isOpen={isAddNoteModalOpen}
+        onClose={() => setIsAddNoteModalOpen(false)}
+        onSave={handleSaveNote}
+      />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { useState } from 'react';
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  onAddNote: () => void;
 }
 
 const topics = [
@@ -32,7 +33,7 @@ const languages = [
   { name: 'JavaScript', color: 'bg-yellow-500' }
 ];
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, onAddNote }: SidebarProps) {
   const [showTopics, setShowTopics] = useState(true);
   const [showLanguages, setShowLanguages] = useState(true);
 
@@ -77,9 +78,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <span className="ml-auto text-sm bg-primary/20 px-2 py-0.5 rounded">42</span>
               </button>
 
-              <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg
-                               text-foreground hover:bg-accent/10 hover:text-accent
-                               transition-all group">
+              <button 
+                onClick={onAddNote}
+                className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg
+                           text-foreground hover:bg-accent/10 hover:text-accent
+                           transition-all group">
                 <Plus className="w-5 h-5" />
                 <span>Add New Note</span>
               </button>
