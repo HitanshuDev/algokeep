@@ -1,11 +1,11 @@
+'use client';
 import { useState, useEffect } from 'react';
 import { X, Code, FileText, Hash, Clock, Database } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '@/store';
+import { addNote } from '@/store/notesSlice';
 
-interface AddNoteModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (formData: NoteFormData) => void;
-}
+
 
 export interface NoteFormData {
   title: string;
@@ -27,7 +27,7 @@ const mapFormToPayload = (form: NoteFormData) => ({
   code: form.code,
   timeComplexity: form.timeComplexity,
   spaceComplexity: form.spaceComplexity,
-  isFavourite: false
+  isFavourite: falseQA
 });
 
 
@@ -58,6 +58,13 @@ export function AddNoteModal({ isOpen, onClose , onSave }: AddNoteModalProps) {
   const [formData, setFormData] = useState<NoteFormData>(initialFormData);
   const [errors, setErrors] = useState<Partial<Record<keyof NoteFormData, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof NoteFormData, boolean>>>({});
+  const dispatch = useDispatch<AppDispatch>();
+const [token, setToken] = useState<string | null>(null);
+
+useEffect(() => {
+  setToken(localStorage.getItem('token'));
+}, []);
+
 
   // Reset form when modal closes
   useEffect(() => {
@@ -158,7 +165,7 @@ export function AddNoteModal({ isOpen, onClose , onSave }: AddNoteModalProps) {
     return isValid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
   setTouched(
@@ -168,11 +175,21 @@ export function AddNoteModal({ isOpen, onClose , onSave }: AddNoteModalProps) {
     )
   );
 
-  if (!validateForm()) return;
+  if (!validateForm() || !token) return;
 
-  onSave(formData); // 👈 DIRECTLY backend-compatible
-  onClose();
+  const payload = {
+    ...formData,
+    isFavourite: false,
+  };
+
+  try {
+    await dispatch(addNote({ note: payload, token })).unwrap();
+    onClose();
+  } catch (err) {
+    console.error('Failed to add note:', err);
+  }
 };
+
 
 
   const isFormValid =

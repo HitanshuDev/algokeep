@@ -1,5 +1,10 @@
+'use client';
 import { Star, Edit2, Trash2, Copy, ExternalLink } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '@/store';
+import { deleteNote } from '@/store/notesSlice';
+
 
 interface Note {
   _id: string;
@@ -35,6 +40,13 @@ const difficultyColors: Record<string, string> = {
 
 export function NoteCard({ note, onClick }: NoteCardProps) {
   const [isFavorite, setIsFavorite] = useState(note.isFavourite);
+  const dispatch = useDispatch<AppDispatch>();
+const [token, setToken] = useState<string | null>(null);
+
+useEffect(() => {
+  setToken(localStorage.getItem('token'));
+}, []);
+
 
 
   const handleFavorite = (e: React.MouseEvent) => {
@@ -42,10 +54,19 @@ export function NoteCard({ note, onClick }: NoteCardProps) {
     setIsFavorite(!isFavorite);
   };
 
-  const handleDelete = (noteId: string) => {
-    // Implement delete logic here
-    console.log(`Delete note with ID: ${noteId}`);
+  const handleDelete = async (noteId: string) => {
+  if (!token) return;
+
+  const confirmDelete = confirm("Are you sure you want to delete this note?");
+  if (!confirmDelete) return;
+
+  try {
+    await dispatch(deleteNote({ noteId, token })).unwrap();
+  } catch (err) {
+    console.error("Failed to delete note:", err);
   }
+};
+
 
   return (
     <div

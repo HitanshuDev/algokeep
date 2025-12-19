@@ -1,6 +1,7 @@
 'use client';
 import { X, Copy, Star, Edit2, ExternalLink, Clock } from 'lucide-react';
 import { useState } from 'react';
+import EditNoteModal from './EditNoteModal';
 
 interface Note {
   _id: string;
@@ -26,6 +27,8 @@ export function NoteDetailView({ note, onClose }: NoteDetailViewProps) {
   const [isFavorite, setIsFavorite] = useState(note?.isFavourite ?? false);
 
   const [copied, setCopied] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
 
   if (!note) return null;
 
@@ -157,6 +160,7 @@ export function NoteDetailView({ note, onClose }: NoteDetailViewProps) {
             Close
           </button>
           <button
+          onClick={() => setIsEditOpen(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-lg
                      bg-primary text-primary-foreground hover:bg-primary/90
                      shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30
@@ -165,6 +169,11 @@ export function NoteDetailView({ note, onClose }: NoteDetailViewProps) {
             <Edit2 className="w-4 h-4" />
             Edit Note
           </button>
+          <EditNoteModal
+        note={note}
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+      />
         </div>
       </div>
     </div>
