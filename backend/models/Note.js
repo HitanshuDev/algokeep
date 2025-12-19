@@ -9,9 +9,9 @@ const noteSchema = new mongoose.Schema({
   algorithm: String,
   topic: String,
   isFavourite: Boolean,
-  Difficulty: String,
-  TimeComplexity: String,
-  SpaceComplexity: String,
+  difficulty: String,
+  timeComplexity: String,
+  spaceComplexity: String,
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

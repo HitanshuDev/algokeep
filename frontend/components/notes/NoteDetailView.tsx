@@ -3,19 +3,19 @@ import { X, Copy, Star, Edit2, ExternalLink, Clock } from 'lucide-react';
 import { useState } from 'react';
 
 interface Note {
-  id: string;
+  _id: string;
   title: string;
+  problem: string;
+  algorithm: string;
+  code: string;
   language: string;
-  topic: string;
-  codePreview: string;
-  Code: string;
-  explanation: string;
-  isFavorite: boolean;
-  difficulty?: 'Easy' | 'Medium' | 'Hard';
-  lastEdited: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
   timeComplexity?: string;
   spaceComplexity?: string;
+  isFavourite: boolean;
+  createdAt: string;
 }
+
 
 interface NoteDetailViewProps {
   note: Note | null;
@@ -23,16 +23,18 @@ interface NoteDetailViewProps {
 }
 
 export function NoteDetailView({ note, onClose }: NoteDetailViewProps) {
-  const [isFavorite, setIsFavorite] = useState(note?.isFavorite || false);
+  const [isFavorite, setIsFavorite] = useState(note?.isFavourite ?? false);
+
   const [copied, setCopied] = useState(false);
 
   if (!note) return null;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(note.Code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  navigator.clipboard.writeText(note.code);
+  setCopied(true);
+  setTimeout(() => setCopied(false), 2000);
+};
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
@@ -59,7 +61,7 @@ export function NoteDetailView({ note, onClose }: NoteDetailViewProps) {
                 {note.language}
               </span>
               <span className="px-3 py-1.5 rounded-lg text-sm bg-accent/20 text-accent border border-accent/30">
-                {note.topic ?? 'Unknown'}
+                {note.problem ?? 'Unknown'}
               </span>
               {note.difficulty && (
                 <span className="px-3 py-1.5 rounded-lg text-sm bg-secondary text-foreground border border-border/50">
@@ -68,7 +70,7 @@ export function NoteDetailView({ note, onClose }: NoteDetailViewProps) {
               )}
               <span className="px-3 py-1.5 rounded-lg text-sm bg-secondary text-muted-foreground border border-border/50 flex items-center gap-2">
                 <Clock className="w-3.5 h-3.5" />
-                {note.lastEdited ?? 'Unknown'}
+                {new Date(note.createdAt).toLocaleString() ?? 'Unknown'}
               </span>
             </div>
           </div>
@@ -132,12 +134,12 @@ export function NoteDetailView({ note, onClose }: NoteDetailViewProps) {
           </div>
 
           {/* Explanation Section */}
-          {note.explanation && (
+          {note.algorithm && (
             <div>
               <h3 className="text-foreground mb-3">Explanation</h3>
               <div className="p-5 rounded-xl bg-secondary/50 border border-border/50">
                 <p className="text-foreground leading-relaxed whitespace-pre-line">
-                  {note.explanation}
+                  {note.algorithm}
                 </p>
               </div>
             </div>

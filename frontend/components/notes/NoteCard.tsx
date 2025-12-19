@@ -1,19 +1,24 @@
 import { Star, Edit2, Trash2, Copy, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 
+interface Note {
+  _id: string;
+  title: string;
+  problem: string;
+  algorithm: string;
+  code: string;
+  language: string;
+  difficulty?: 'Easy' | 'Medium' | 'Hard';
+  isFavourite: boolean;
+  createdAt: string;
+}
+
+
 interface NoteCardProps {
-  note: {
-    id: string;
-    title: string;
-    language: string;
-    topic: string;
-    code: string;
-    isFavorite: boolean;
-    difficulty?: 'Easy' | 'Medium' | 'Hard' ;
-    lastEdited: string;
-  };
+  note: Note;
   onClick: () => void;
 }
+
 
 const languageColors: Record<string, string> = {
   'C++': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
@@ -29,7 +34,8 @@ const difficultyColors: Record<string, string> = {
 };
 
 export function NoteCard({ note, onClick }: NoteCardProps) {
-  const [isFavorite, setIsFavorite] = useState(note.isFavorite);
+  const [isFavorite, setIsFavorite] = useState(note.isFavourite);
+
 
   const handleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -54,9 +60,9 @@ export function NoteCard({ note, onClick }: NoteCardProps) {
             <span className={`px-2.5 py-1 rounded-md text-xs border ${languageColors[note.language] || 'bg-muted text-muted-foreground'}`}>
               {note.language}
             </span>
-            <span className="px-2.5 py-1 rounded-md text-xs bg-primary/10 text-primary border border-primary/20">
+            {/* <span className="px-2.5 py-1 rounded-md text-xs bg-primary/10 text-primary border border-primary/20">
               {note.topic}
-            </span>
+            </span> */}
             {note.difficulty && (
               <span className={`px-2.5 py-1 rounded-md text-xs ${difficultyColors[note.difficulty]}`}>
                 {note.difficulty}
@@ -90,8 +96,9 @@ export function NoteCard({ note, onClick }: NoteCardProps) {
       {/* Footer Actions */}
       <div className="flex items-center justify-between">
         <span className="text-xs text-muted-foreground">
-          {note.lastEdited}
-        </span>
+  {new Date(note.createdAt).toLocaleDateString()}
+</span>
+
 
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button

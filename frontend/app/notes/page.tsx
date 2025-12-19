@@ -244,6 +244,18 @@ The use of a hash map makes the solution clean and extensible to any number of b
   }
 ];
 
+export interface NoteFormData {
+  title: string;
+  problem: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard' | '';
+  language: 'C++' | 'Java' | 'Python' | 'JavaScript' | '';
+  algorithm: string;
+  code: string;
+  timeComplexity: string;
+  spaceComplexity: string;
+  isFavorite: boolean;
+}
+
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -251,31 +263,8 @@ export default function App() {
   const [mobileTab, setMobileTab] = useState('all');
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   const [notes, setNotes] = useState([]);
+  const [error, setError] = useState(null);
 
-  const handleSaveNote = (formData: NoteFormData) => {
-    // Create new note from form data
-    const newNote = {
-      id: String(notes.length + 1),
-      title: formData.title,
-      language: formData.language as string,
-      topic: 'General', // Could be derived from approach or set separately
-      codePreview: formData.code.split('\n').slice(0, 6).join('\n') + '\n    ...',
-      fullCode: formData.code,
-      explanation: formData.approach,
-      isFavorite: false,
-      difficulty: formData.difficulty as string,
-      lastEdited: 'Just now',
-      timeComplexity: formData.timeComplexity,
-      spaceComplexity: formData.spaceComplexity,
-      description: formData.description
-    };
-
-    setNotes([newNote, ...notes]);
-    toast.success('Note saved successfully!', {
-      description: `"${formData.title}" has been added to your collection.`,
-      duration: 3000,
-    });
-  };
 
   const token = localStorage.getItem('token');
 //   console.log('Token:', token);
@@ -300,6 +289,26 @@ export default function App() {
 
     fetchNotes();
   }, [token]);
+
+  
+
+  const handleSaveNote = async (note: NoteFormData) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notes`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(note),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message);
+
+  setNotes(prev => [data.note, ...prev]);
+};
+
+
 
 
   return (

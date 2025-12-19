@@ -1,35 +1,47 @@
 import { useState, useEffect } from 'react';
 import { X, Code, FileText, Hash, Clock, Database } from 'lucide-react';
-import { on } from 'events';
 
 interface AddNoteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (note: NoteFormData) => void;
-  onAddNote: () => void;
+  onSave: (formData: NoteFormData) => void;
 }
 
 export interface NoteFormData {
   title: string;
-  description: string;
+  problem: string;
   difficulty: 'Easy' | 'Medium' | 'Hard' | '';
   language: 'C++' | 'Java' | 'Python' | 'JavaScript' | '';
-  approach: string;
+  algorithm: string;
   code: string;
   timeComplexity: string;
   spaceComplexity: string;
 }
 
+const mapFormToPayload = (form: NoteFormData) => ({
+  title: form.title,
+  problem: form.problem,
+  difficulty: form.difficulty,
+  language: form.language,
+  algorithm: form.algorithm,
+  code: form.code,
+  timeComplexity: form.timeComplexity,
+  spaceComplexity: form.spaceComplexity,
+  isFavourite: false
+});
+
+
 const initialFormData: NoteFormData = {
   title: '',
-  description: '',
+  problem: '',
   difficulty: '',
   language: '',
-  approach: '',
+  algorithm: '',
   code: '',
   timeComplexity: '',
-  spaceComplexity: ''
+  spaceComplexity: '',
 };
+
 
 const complexityOptions = [
   'O(1)',
@@ -42,7 +54,7 @@ const complexityOptions = [
   'O(n!)'
 ];
 
-export function AddNoteModal({ isOpen, onClose, onSave , onAddNote }: AddNoteModalProps) {
+export function AddNoteModal({ isOpen, onClose , onSave }: AddNoteModalProps) {
   const [formData, setFormData] = useState<NoteFormData>(initialFormData);
   const [errors, setErrors] = useState<Partial<Record<keyof NoteFormData, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof NoteFormData, boolean>>>({});
@@ -89,13 +101,13 @@ export function AddNoteModal({ isOpen, onClose, onSave , onAddNote }: AddNoteMod
     
     if (field === 'title' && !value.trim()) {
       error = 'Title is required';
-    } else if (field === 'description' && !value.trim()) {
+    } else if (field === 'problem' && !value.trim()) {
       error = 'Problem description is required';
     } else if (field === 'difficulty' && !value) {
       error = 'Difficulty level is required';
     } else if (field === 'language' && !value) {
       error = 'Programming language is required';
-    } else if (field === 'approach' && !value.trim()) {
+    } else if (field === 'algorithm' && !value.trim()) {
       error = 'Algorithm/Approach is required';
     } else if (field === 'code' && !value.trim()) {
       error = 'Code is required';
@@ -108,6 +120,29 @@ export function AddNoteModal({ isOpen, onClose, onSave , onAddNote }: AddNoteMod
     setErrors(prev => ({ ...prev, [field]: error }));
     return error === '';
   };
+
+//   const handleSave = async (formData: NoteFormData) => {
+//   const token = localStorage.getItem('token');
+
+//   const payload = mapFormToPayload(formData);
+
+//   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notes`, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       Authorization: `Bearer ${token}`
+//     },
+//     body: JSON.stringify(payload)
+//   });
+
+//   if (!res.ok) {
+//     throw new Error('Failed to create note');
+//   }
+
+//   const data = await res.json();
+//   return data.note;
+// };
+
 
 
   const validateForm = (): boolean => {
@@ -124,24 +159,33 @@ export function AddNoteModal({ isOpen, onClose, onSave , onAddNote }: AddNoteMod
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Mark all fields as touched
-    const allTouched = Object.keys(formData).reduce((acc, key) => ({
-      ...acc,
-      [key]: true
-    }), {} as Record<keyof NoteFormData, boolean>);
-    setTouched(allTouched);
+  e.preventDefault();
 
-    if (validateForm()) {
-      onSave(formData);
-      // onAddNote(formData);
-      onClose();
+  setTouched(
+    Object.keys(formData).reduce(
+      (acc, key) => ({ ...acc, [key]: true }),
+      {} as Record<keyof NoteFormData, boolean>
+    )
+  );
 
-    }
-  };
+  if (!validateForm()) return;
 
-  const isFormValid = Object.values(formData).every(value => value.trim() !== '');
+  onSave(formData); // 👈 DIRECTLY backend-compatible
+  onClose();
+};
+
+
+  const isFormValid =
+  formData.title.trim() &&
+  formData.problem.trim() &&
+  formData.algorithm.trim() &&
+  formData.code.trim() &&
+  formData.difficulty &&
+  formData.language &&
+  formData.timeComplexity.trim() &&
+  formData.spaceComplexity.trim();
+
+
 
   // Handle keyboard shortcuts
   useEffect(() => {
@@ -297,19 +341,19 @@ export function AddNoteModal({ isOpen, onClose, onSave , onAddNote }: AddNoteMod
                   </label>
                   <textarea
                     id="description"
-                    value={formData.description}
-                    onChange={(e) => handleChange('description', e.target.value)}
-                    onBlur={() => handleBlur('description')}
+                    value={formData.problem}
+                    onChange={(e) => handleChange('problem', e.target.value)}
+                    onBlur={() => handleBlur('problem')}
                     placeholder="Describe the problem statement, constraints, and examples..."
                     rows={4}
                     className={`w-full px-4 py-2.5 bg-input-background rounded-lg border
-                             ${touched.description && errors.description ? 'border-destructive' : 'border-border/50'}
+                             ${touched.problem && errors.problem ? 'border-destructive' : 'border-border/50'}
                              text-foreground placeholder:text-muted-foreground
                              focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent
                              transition-all resize-none`}
                   />
-                  {touched.description && errors.description && (
-                    <p className="mt-1 text-sm text-destructive">{errors.description}</p>
+                  {touched.problem && errors.problem && (
+                    <p className="mt-1 text-sm text-destructive">{errors.problem}</p>
                   )}
                 </div>
               </div>
@@ -327,19 +371,19 @@ export function AddNoteModal({ isOpen, onClose, onSave , onAddNote }: AddNoteMod
                   </label>
                   <textarea
                     id="approach"
-                    value={formData.approach}
-                    onChange={(e) => handleChange('approach', e.target.value)}
-                    onBlur={() => handleBlur('approach')}
+                    value={formData.algorithm}
+                    onChange={(e) => handleChange('algorithm', e.target.value)}
+                    onBlur={() => handleBlur('algorithm')}
                     placeholder="Explain your approach, key insights, and steps to solve the problem..."
                     rows={5}
                     className={`w-full px-4 py-2.5 bg-input-background rounded-lg border
-                             ${touched.approach && errors.approach ? 'border-destructive' : 'border-border/50'}
+                             ${touched.algorithm && errors.algorithm ? 'border-destructive' : 'border-border/50'}
                              text-foreground placeholder:text-muted-foreground
                              focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent
                              transition-all resize-none`}
                   />
-                  {touched.approach && errors.approach && (
-                    <p className="mt-1 text-sm text-destructive">{errors.approach}</p>
+                  {touched.algorithm && errors.algorithm && (
+                    <p className="mt-1 text-sm text-destructive">{errors.algorithm}</p>
                   )}
                 </div>
               </div>
