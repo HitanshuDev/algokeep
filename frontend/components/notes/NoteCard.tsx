@@ -42,6 +42,11 @@ export function NoteCard({ note, onClick }: NoteCardProps) {
     setIsFavorite(!isFavorite);
   };
 
+  const handleDelete = (noteId: string) => {
+    // Implement delete logic here
+    console.log(`Delete note with ID: ${noteId}`);
+  }
+
   return (
     <div
       onClick={onClick}
@@ -127,6 +132,7 @@ export function NoteCard({ note, onClick }: NoteCardProps) {
             onClick={(e) => {
               e.stopPropagation();
               // Delete logic
+              handleDelete(note._id);
             }}
             className="p-2 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-all"
             aria-label="Delete note"
