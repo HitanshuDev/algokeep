@@ -87,6 +87,7 @@ export const updateNote = createAsyncThunk(
     updatedData: Partial<Note>;
     token: string;
   }) => {
+    console.log(updatedData);
     const res = await fetch(`${API}/api/notes/${noteId}`, {
       method: "PUT",
       headers: {

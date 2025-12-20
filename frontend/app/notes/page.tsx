@@ -18,7 +18,8 @@ export default function App() {
   // ---------------- UI STATE (LOCAL) ----------------
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedNote, setSelectedNote] = useState<any | null>(null);
+  // const [selectedNote, setSelectedNote] = useState<any | null>(null);
+  const [selectedNoteId, setSelectedNoteId] = useState<any | null>(null);
   const [mobileTab, setMobileTab] = useState('all');
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
 
@@ -93,9 +94,9 @@ export default function App() {
             {/* Notes Grid */}
             {!loading && !error && (
               <NotesGrid
+              viewMode={viewMode}
                 notes={notes}
-                viewMode={viewMode}
-                onNoteClick={setSelectedNote}
+                onNoteClick={(note) => setSelectedNoteId(note._id)}
               />
             )}
           </div>
@@ -110,8 +111,8 @@ export default function App() {
 
       {/* Note Detail Modal */}
       <NoteDetailView
-        note={selectedNote}
-        onClose={() => setSelectedNote(null)}
+        noteId={selectedNoteId}
+        onClose={() => setSelectedNoteId(null)}
       />
 
       {/* Add Note Modal */}
