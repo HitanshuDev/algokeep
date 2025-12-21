@@ -13,6 +13,7 @@ interface Note {
   algorithm: string;
   code: string;
   language: string;
+  topic: string;
   difficulty?: 'Easy' | 'Medium' | 'Hard';
   isFavourite: boolean;
   createdAt: string;
@@ -86,9 +87,9 @@ useEffect(() => {
             <span className={`px-2.5 py-1 rounded-md text-xs border ${languageColors[note.language] || 'bg-muted text-muted-foreground'}`}>
               {note.language}
             </span>
-            {/* <span className="px-2.5 py-1 rounded-md text-xs bg-primary/10 text-primary border border-primary/20">
+            {note.topic && (<span className="px-2.5 py-1 rounded-md text-xs bg-primary/10 text-primary border border-primary/20">
               {note.topic}
-            </span> */}
+            </span>)}
             {note.difficulty && (
               <span className={`px-2.5 py-1 rounded-md text-xs ${difficultyColors[note.difficulty]}`}>
                 {note.difficulty}
@@ -138,7 +139,7 @@ useEffect(() => {
             <Copy className="w-4 h-4" />
           </button>
           
-          <button
+          {/* <button
             onClick={(e) => {
               e.stopPropagation();
               // Edit logic
@@ -147,7 +148,7 @@ useEffect(() => {
             aria-label="Edit note"
           >
             <Edit2 className="w-4 h-4" />
-          </button>
+          </button> */}
           
           <button
             onClick={(e) => {

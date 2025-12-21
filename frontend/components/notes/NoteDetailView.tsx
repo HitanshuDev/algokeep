@@ -14,6 +14,7 @@ interface Note {
   algorithm: string;
   code: string;
   language: string;
+  topic: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   timeComplexity?: string;
   spaceComplexity?: string;
@@ -34,6 +35,7 @@ export function NoteDetailView({ noteId, onClose }: NoteDetailViewProps) {
     state.notes.notes.find(n => n._id === noteId)
   );
 
+  // console.log(note);
   // if (!note) return null;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -135,6 +137,9 @@ export function NoteDetailView({ noteId, onClose }: NoteDetailViewProps) {
             <div className="flex flex-wrap gap-2">
               <span className="px-3 py-1.5 rounded-lg text-sm bg-primary/20 text-primary border border-primary/30">
                 {note.language}
+              </span>
+              <span className="px-3 py-1.5 rounded-lg text-sm bg-primary/20 text-primary border border-primary/30">
+                {note.topic}
               </span>
 
               {isEditing ? (

@@ -12,6 +12,7 @@ export interface NoteFormData {
   problem: string;
   difficulty: 'Easy' | 'Medium' | 'Hard' | '';
   language: 'C++' | 'Java' | 'Python' | 'JavaScript' | '';
+  topic: string;
   algorithm: string;
   code: string;
   timeComplexity: string;
@@ -23,6 +24,7 @@ const mapFormToPayload = (form: NoteFormData) => ({
   problem: form.problem,
   difficulty: form.difficulty,
   language: form.language,
+  topic: form.topic,
   algorithm: form.algorithm,
   code: form.code,
   timeComplexity: form.timeComplexity,
@@ -36,6 +38,7 @@ const initialFormData: NoteFormData = {
   problem: '',
   difficulty: '',
   language: '',
+  topic: '',
   algorithm: '',
   code: '',
   timeComplexity: '',
@@ -114,6 +117,8 @@ useEffect(() => {
       error = 'Difficulty level is required';
     } else if (field === 'language' && !value) {
       error = 'Programming language is required';
+    } else if (field === 'topic' && !value) {
+      error = 'Programming topic is required';
     } else if (field === 'algorithm' && !value.trim()) {
       error = 'Algorithm/Approach is required';
     } else if (field === 'code' && !value.trim()) {
@@ -199,6 +204,7 @@ useEffect(() => {
   formData.code.trim() &&
   formData.difficulty &&
   formData.language &&
+  formData.topic &&
   formData.timeComplexity.trim() &&
   formData.spaceComplexity.trim();
 
@@ -324,7 +330,8 @@ useEffect(() => {
                   </div>
 
                   {/* Language */}
-                  <div>
+                  <div className='flex gap-4'>
+                    <div>
                     <label htmlFor="language" className="block text-sm text-foreground mb-2">
                       Programming Language <span className="text-destructive">*</span>
                     </label>
@@ -348,6 +355,36 @@ useEffect(() => {
                     {touched.language && errors.language && (
                       <p className="mt-1 text-sm text-destructive">{errors.language}</p>
                     )}
+                    </div>
+                    <div>
+                    <label htmlFor="language" className="block text-sm text-foreground mb-2">
+                      Topic <span className="text-destructive">*</span>
+                    </label>
+                    <select
+                      id="language"
+                      value={formData.topic}
+                      onChange={(e) => handleChange('topic', e.target.value)}
+                      onBlur={() => handleBlur('topic')}
+                      className={`w-full px-4 py-2.5 bg-input-background rounded-lg border
+                               ${touched.language && errors.language ? 'border-destructive' : 'border-border/50'}
+                               text-foreground
+                               focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent
+                               transition-all cursor-pointer`}
+                    >
+                      <option value="">Select language</option>
+                      <option value="Arrays++">Arrays</option>
+                      <option value="Linked Lists">Linked Lists</option>
+                      <option value="Trees">Trees</option>
+                      <option value="Graph">Graph</option>
+                      <option value="Dynamic Programming">Dynamic Programming</option>
+                      <option value="Sorting">Sorting</option>
+                      <option value="Searching">Searching</option>
+                      <option value="Hash Tables">Hash Tables</option>
+                    </select>
+                    {touched.topic && errors.topic && (
+                      <p className="mt-1 text-sm text-destructive">{errors.topic}</p>
+                    )}
+                    </div>
                   </div>
                 </div>
 
