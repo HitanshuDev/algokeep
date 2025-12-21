@@ -372,10 +372,10 @@ useEffect(() => {
                                transition-all cursor-pointer`}
                     >
                       <option value="">Select language</option>
-                      <option value="Arrays++">Arrays</option>
+                      <option value="Arrays">Arrays</option>
                       <option value="Linked Lists">Linked Lists</option>
                       <option value="Trees">Trees</option>
-                      <option value="Graph">Graph</option>
+                      <option value="Graphs">Graphs</option>
                       <option value="Dynamic Programming">Dynamic Programming</option>
                       <option value="Sorting">Sorting</option>
                       <option value="Searching">Searching</option>

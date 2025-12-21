@@ -9,6 +9,7 @@ export interface Note {
   algorithm: string;
   code: string;
   language: string;
+  topic: string;
   difficulty: "Easy" | "Medium" | "Hard";
   timeComplexity: string;
   spaceComplexity: string;
@@ -20,12 +21,22 @@ interface NotesState {
   notes: Note[];
   loading: boolean;
   error: string | null;
+  filters: {
+    topic: string;
+    isFavourite: boolean;
+    language: string;
+  };
 }
 
 const initialState: NotesState = {
   notes: [],
   loading: false,
   error: null,
+  filters: {
+    topic: "",
+    isFavourite: false,
+    language: "",
+  },
 };
 
 export const fetchNotes = createAsyncThunk(
@@ -87,7 +98,7 @@ export const updateNote = createAsyncThunk(
     updatedData: Partial<Note>;
     token: string;
   }) => {
-    console.log(updatedData);
+    // console.log(updatedData);
     const res = await fetch(`${API}/api/notes/${noteId}`, {
       method: "PUT",
       headers: {
@@ -107,7 +118,24 @@ export const updateNote = createAsyncThunk(
 const notesSlice = createSlice({
   name: "notes",
   initialState,
-  reducers: {},
+  reducers: {
+    setTopicFilter(state, action) {
+      state.filters.topic = action.payload;
+    },
+    setLanguageFilter(state, action) {
+      state.filters.language = action.payload;
+    },
+    toggleFavouritesFilter(state) {
+      state.filters.isFavourite = !state.filters.isFavourite;
+    },
+    clearFilters(state) {
+      state.filters = {
+        topic: "",
+        language: "",
+        isFavourite: false,
+      };
+    },
+  },
   extraReducers: (builder) => {
     builder
       // fetch
@@ -146,3 +174,10 @@ const notesSlice = createSlice({
 });
 
 export default notesSlice.reducer;
+
+export const {
+  setTopicFilter,
+  setLanguageFilter,
+  toggleFavouritesFilter,
+  clearFilters,
+} = notesSlice.actions;

@@ -138,9 +138,9 @@ export function NoteDetailView({ noteId, onClose }: NoteDetailViewProps) {
               <span className="px-3 py-1.5 rounded-lg text-sm bg-primary/20 text-primary border border-primary/30">
                 {note.language}
               </span>
-              <span className="px-3 py-1.5 rounded-lg text-sm bg-primary/20 text-primary border border-primary/30">
+              {note.topic && (<span className="px-3 py-1.5 rounded-lg text-sm bg-primary/20 text-primary border border-primary/30">
                 {note.topic}
-              </span>
+              </span>)}
 
               {isEditing ? (
                 <input

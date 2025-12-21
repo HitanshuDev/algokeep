@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '@/store';
 import { deleteNote } from '@/store/notesSlice';
+import { updateNote } from '@/store/notesSlice';
 
 
 interface Note {
@@ -50,10 +51,18 @@ useEffect(() => {
 
 
 
-  const handleFavorite = (e: React.MouseEvent) => {
+  const handleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
+
+    if (!token) return;
+    try{
+      await dispatch(updateNote({ noteId: note._id, updatedData: { isFavourite: !isFavorite }, token })).unwrap(); 
+    } catch (err) {
+      console.error('Failed to update note:', err);
+    }
     setIsFavorite(!isFavorite);
   };
+
 
   const handleDelete = async (noteId: string) => {
   if (!token) return;

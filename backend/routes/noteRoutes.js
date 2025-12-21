@@ -97,12 +97,22 @@ router.put("/:id", authMiddleware, async (req, res) => {
     algorithm,
     timeComplexity,
     spaceComplexity,
+    isFavourite = false,
   } = req.body;
 
   try {
     const note = await Note.findOneAndUpdate(
       { _id: req.params.id, user: req.user },
-      { title, problem, algorithm, code, timeComplexity, spaceComplexity },
+      {
+        title,
+        problem,
+        algorithm,
+        code,
+        timeComplexity,
+        spaceComplexity,
+        isFavourite,
+        language,
+      },
       { new: true, runValidators: true }
     );
 

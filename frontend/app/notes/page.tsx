@@ -13,6 +13,7 @@ import { AddNoteModal, NoteFormData } from '@/components/notes/AddNoteModal';
 
 import { fetchNotes, addNote } from '@/store/notesSlice';
 import type { RootState, AppDispatch } from '@/store';
+import { filteredNoteSelector } from '@/store/noteSelector';
 
 export default function App() {
   // ---------------- UI STATE (LOCAL) ----------------
@@ -29,6 +30,8 @@ export default function App() {
   const { notes, loading, error } = useSelector(
     (state: RootState) => state.notes
   );
+  
+  const filteredNotes = useSelector(filteredNoteSelector);
 
   // ---------------- AUTH ----------------
   const token =
@@ -95,7 +98,7 @@ export default function App() {
             {!loading && !error && (
               <NotesGrid
               viewMode={viewMode}
-                notes={notes}
+                notes={filteredNotes}
                 onNoteClick={(note) => setSelectedNoteId(note._id)}
               />
             )}
