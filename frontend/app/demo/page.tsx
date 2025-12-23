@@ -243,10 +243,23 @@ The use of a hash map makes the solution clean and extensible to any number of b
   }
 ];
 
+interface Note {
+  id: string;
+  title: string;
+  language: string;
+  topic: string;
+  fullCode: string;
+  codePreview: string;
+  isFavorite: boolean;
+  explanation: string;
+  difficulty?: string;
+  lastEdited: string;
+}
+
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedNote, setSelectedNote] = useState<typeof mockNotes[0] | null>(null);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [mobileTab, setMobileTab] = useState('all');
 
   return (

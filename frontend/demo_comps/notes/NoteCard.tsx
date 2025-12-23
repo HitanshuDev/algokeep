@@ -9,7 +9,7 @@ interface NoteCardProps {
     topic: string;
     codePreview: string;
     isFavorite: boolean;
-    difficulty?: 'Easy' | 'Medium' | 'Hard';
+    difficulty?: string;
     lastEdited: string;
   };
   onClick: () => void;

@@ -8,10 +8,10 @@ interface Note {
   language: string;
   topic: string;
   codePreview: string;
-  Code: string;
+  fullCode: string;
   explanation: string;
   isFavorite: boolean;
-  difficulty?: 'Easy' | 'Medium' | 'Hard';
+  difficulty?: string;
   lastEdited: string;
   timeComplexity?: string;
   spaceComplexity?: string;

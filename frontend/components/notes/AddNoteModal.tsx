@@ -19,19 +19,6 @@ export interface NoteFormData {
   spaceComplexity: string;
 }
 
-const mapFormToPayload = (form: NoteFormData) => ({
-  title: form.title,
-  problem: form.problem,
-  difficulty: form.difficulty,
-  language: form.language,
-  topic: form.topic,
-  algorithm: form.algorithm,
-  code: form.code,
-  timeComplexity: form.timeComplexity,
-  spaceComplexity: form.spaceComplexity,
-  isFavourite: falseQA
-});
-
 
 const initialFormData: NoteFormData = {
   title: '',
@@ -45,6 +32,11 @@ const initialFormData: NoteFormData = {
   spaceComplexity: '',
 };
 
+interface AddNoteModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
 
 const complexityOptions = [
   'O(1)',
@@ -57,7 +49,7 @@ const complexityOptions = [
   'O(n!)'
 ];
 
-export function AddNoteModal({ isOpen, onClose , onSave }: AddNoteModalProps) {
+export function AddNoteModal({ isOpen, onClose }: AddNoteModalProps) {
   const [formData, setFormData] = useState<NoteFormData>(initialFormData);
   const [errors, setErrors] = useState<Partial<Record<keyof NoteFormData, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof NoteFormData, boolean>>>({});

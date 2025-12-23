@@ -123,7 +123,6 @@ export default function App() {
       <AddNoteModal
         isOpen={isAddNoteModalOpen}
         onClose={() => setIsAddNoteModalOpen(false)}
-        onSave={handleSaveNote}
       />
     </div>
   );
