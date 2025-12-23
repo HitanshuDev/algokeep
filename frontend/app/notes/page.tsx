@@ -23,6 +23,7 @@ export default function App() {
   const [selectedNoteId, setSelectedNoteId] = useState<any | null>(null);
   const [mobileTab, setMobileTab] = useState('all');
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
+  console.log(typeof setIsAddNoteModalOpen);
 
   // ---------------- REDUX ----------------
   const dispatch = useDispatch<AppDispatch>();
@@ -109,7 +110,7 @@ export default function App() {
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav
         activeTab={mobileTab}
-        onTabChange={setMobileTab}
+        setIsAddNoteModalOpen={setIsAddNoteModalOpen}
       />
 
       {/* Note Detail Modal */}

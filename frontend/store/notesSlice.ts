@@ -22,6 +22,7 @@ interface NotesState {
   loading: boolean;
   error: string | null;
   filters: {
+    search: string;
     topic: string;
     isFavourite: boolean;
     language: string;
@@ -33,6 +34,7 @@ const initialState: NotesState = {
   loading: false,
   error: null,
   filters: {
+    search: "",
     topic: "",
     isFavourite: false,
     language: "",
@@ -125,11 +127,15 @@ const notesSlice = createSlice({
     setLanguageFilter(state, action) {
       state.filters.language = action.payload;
     },
+    setSearchFilter(state, action) {
+      state.filters.search = action.payload;
+    },
     toggleFavouritesFilter(state) {
       state.filters.isFavourite = !state.filters.isFavourite;
     },
     clearFilters(state) {
       state.filters = {
+        search: "",
         topic: "",
         language: "",
         isFavourite: false,
@@ -177,6 +183,7 @@ export default notesSlice.reducer;
 
 export const {
   setTopicFilter,
+  setSearchFilter,
   setLanguageFilter,
   toggleFavouritesFilter,
   clearFilters,

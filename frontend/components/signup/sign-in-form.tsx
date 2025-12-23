@@ -43,6 +43,7 @@ export const SignInForm: React.FC = () => {
       } else {
         // Save token in localStorage or state
         localStorage.setItem('token', data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         // onLogin(data.email);
         navigate.push('/notes');
       }

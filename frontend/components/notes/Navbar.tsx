@@ -1,10 +1,49 @@
 import { Search, Settings, Menu } from 'lucide-react';
-
+import { useState , useEffect } from 'react';
+import { AppDispatch } from '@/store';
+import { useDispatch } from 'react-redux';
+import { setSearchFilter } from '@/store/notesSlice';
 interface NavbarProps {
   onMenuClick: () => void;
 }
+const getInitials = (name?: string | null) => {
+  if (!name) return "U";
+
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+
+  return (
+    parts[0][0].toUpperCase() +
+    parts[parts.length - 1][0].toUpperCase()
+  );
+};
+
 
 export function Navbar({ onMenuClick }: NavbarProps) {
+
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser);
+      setUserName(user.name);
+    } catch {
+      setUserName(null);
+    }
+  }
+}, []);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    dispatch(setSearchFilter(event.target.value));
+  };
+
+  const [searchQuery, setSearchQuery] = useState('');
+
   return (
     <nav className="sticky top-0 z-50 glass border-b border-border/50">
       <div className="flex items-center justify-between px-4 md:px-6 h-16">
@@ -32,6 +71,8 @@ export function Navbar({ onMenuClick }: NavbarProps) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
+              value={searchQuery}
+              onChange={handleSearch}
               placeholder="Search DSA notes..."
               className="w-full pl-10 pr-4 py-2 bg-secondary rounded-lg border border-border/50 
                        text-foreground placeholder:text-muted-foreground
@@ -53,7 +94,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-accent 
                         flex items-center justify-center cursor-pointer
                         hover:shadow-lg hover:shadow-accent/20 transition-all">
-            <span className="text-sm text-background">DS</span>
+            <span className="text-sm text-background">{getInitials(userName)}</span>
           </div>
         </div>
       </div>

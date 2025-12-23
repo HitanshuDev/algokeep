@@ -1,11 +1,23 @@
 import { FileText, Plus, Star, Tag, User } from 'lucide-react';
+import {setTopicFilter, setLanguageFilter , toggleFavouritesFilter, clearFilters} from '@/store/notesSlice';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '@/store';;
 
 interface MobileBottomNavProps {
   activeTab: string;
-  onTabChange: (tab: string) => void;
+  setIsAddNoteModalOpen: (boolean : boolean) => boolean;
 }
 
-export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps) {
+
+
+export function MobileBottomNav({ activeTab, setIsAddNoteModalOpen }: MobileBottomNavProps) {
+
+  const dispatch = useDispatch<AppDispatch>();
+
+const handleFavouritesClick = () => {
+    dispatch(toggleFavouritesFilter());
+  }
+
   const tabs = [
     { id: 'all', icon: FileText, label: 'All' },
     { id: 'favorites', icon: Star, label: 'Favorites' },
@@ -25,7 +37,22 @@ export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps
           return (
             <button
               key={tab.id}
-              onClick={() => onTabChange(tab.id)}
+              onClick={() => {
+                
+                if(tab.id === 'all') {
+                  dispatch(clearFilters());
+                }else if(tab.id === 'topics') {
+                  dispatch(setTopicFilter(''));
+                  dispatch(setLanguageFilter(''));
+                }
+
+                if(tab.id === 'add') {
+                  setIsAddNoteModalOpen(true);
+                }else if(tab.id === 'favorites'){
+                  handleFavouritesClick();
+                }
+
+              }}
               className={`
                 flex flex-col items-center justify-center gap-1 py-2 rounded-lg
                 transition-all duration-200
