@@ -1,22 +1,26 @@
 import { NoteCard } from './NoteCard';
 
-interface Note {
+export interface Note {
   id: string;
   title: string;
   language: string;
   topic: string;
   codePreview: string;
+  fullCode: string; // Added
+  explanation: string; // Added
   isFavorite: boolean;
-  difficulty?: 'Easy' | 'Medium' | 'Hard';
+  difficulty?: string;
   lastEdited: string;
+  timeComplexity?: string; // Added
+  spaceComplexity?: string; // Added
 }
 
 interface NotesGridProps {
+  // Use the updated Note interface
   notes: Note[];
-  viewMode: 'grid' | 'list';
+  viewMode: "grid" | "list";
   onNoteClick: (note: Note) => void;
 }
-
 export function NotesGrid({ notes, viewMode, onNoteClick }: NotesGridProps) {
   if (notes.length === 0) {
     return (

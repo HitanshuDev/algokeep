@@ -1,14 +1,14 @@
 import { NoteCard } from './NoteCard';
 
 interface Note {
-  id: string;
+  _id: string;
   title: string;
   language: string;
+  code: string;
   topic: string;
-  codePreview: string;
-  isFavorite: boolean;
+  isFavourite: boolean;
   difficulty?: 'Easy' | 'Medium' | 'Hard';
-  lastEdited: string;
+  createdAt: string;
 }
 
 interface NotesGridProps {

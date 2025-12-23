@@ -5,7 +5,7 @@ import type { AppDispatch } from '@/store';;
 
 interface MobileBottomNavProps {
   activeTab: string;
-  setIsAddNoteModalOpen: (boolean : boolean) => boolean;
+  setIsAddNoteModalOpen: (boolean: boolean) => void;
 }
 
 

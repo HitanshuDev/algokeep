@@ -50,7 +50,7 @@ export const SignUpForm: React.FC = () => {
       });
 
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
 
       if (!res.ok) {
         setError(data.message || 'Signup failed');

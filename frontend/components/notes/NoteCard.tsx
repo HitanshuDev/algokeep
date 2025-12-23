@@ -10,8 +10,6 @@ import { updateNote } from '@/store/notesSlice';
 interface Note {
   _id: string;
   title: string;
-  problem: string;
-  algorithm: string;
   code: string;
   language: string;
   topic: string;
