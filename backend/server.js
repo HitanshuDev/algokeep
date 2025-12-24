@@ -13,8 +13,9 @@ const app = express();
 app.use(cors({
   origin: function(origin, callback) {
     const allowedOrigins = [
-      "https://algo-keep-dsa-notes-manager.vercel.app",  // production frontend
-      "http://localhost:3000"                             // local frontend
+      "https://algo-keep-dsa-notes-manager.vercel.app", // production frontend
+      "http://localhost:3000",
+      "http://frontend:3000"
     ];
     // Allow requests with no origin (like curl, Postman)
     if (!origin) return callback(null, true);

@@ -7,18 +7,21 @@ export const filteredNoteSelector = createSelector(
     (state: RootState) => state.notes.filters,
   ],
   (notes, filters) => {
-    const search = filters.search.toLowerCase().trim();
+    const search = (filters.search ?? "").toLowerCase().trim();
+    console.log("search");
+
 
     return notes.filter((note) => {
-      if (filters.topic && note.topic !== filters.topic) return false;
-      if (filters.language && note.language !== filters.language) return false;
+      const title = (note.title ?? "").toLowerCase();
+      const problem = (note.problem ?? "").toLowerCase();
+      const topic = note.topic ?? "";
+      const language = note.language ?? "";
+
+      if (filters.topic && topic !== filters.topic) return false;
+      if (filters.language && language !== filters.language) return false;
       if (filters.isFavourite && !note.isFavourite) return false;
 
-      if (
-        search &&
-        !note.title.toLowerCase().includes(search) &&
-        !note.problem.toLowerCase().includes(search)
-      ) {
+      if (search && !title.includes(search) && !problem.includes(search)) {
         return false;
       }
 
@@ -27,6 +30,10 @@ export const filteredNoteSelector = createSelector(
   }
 );
 
+
 // notesSelectors.ts
-export const selectFavouriteCount = (state: RootState) =>
-  state.notes.notes.filter((n) => n.isFavourite).length;
+export const selectFavouriteCount = createSelector(
+  (state: RootState) => state.notes.notes,
+  (notes) => notes.filter((n) => n.isFavourite).length
+);
+

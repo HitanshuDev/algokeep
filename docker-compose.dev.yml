@@ -1,6 +1,8 @@
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
     container_name: algokeep-backend
     ports:
       - "5000:5000"
@@ -14,18 +16,33 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     container_name: algokeep-frontend
     ports:
       - "3000:3000"
     env_file:
       - ./frontend/.env.local
-    depends_on:
-      - backend
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      - WATCHPACK_POLLING_INTERVAL=200
+      - NEXT_TELEMETRY_DISABLED=1
     volumes:
       - ./frontend:/app
       - /app/node_modules
     restart: unless-stopped
+    # develop:
+    #   watch:
+    #     - action: sync
+    #       path: ./frontend/src
+    #       target: ./frontend/src
+    #       ignore:
+    #        - node_modules
+    #     - action: rebuild
+    #       path: package.json
+
 
   mongo:
     image: mongo:7
