@@ -27,7 +27,7 @@ export function HeroSection() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-morphism">
               <Sparkles className="w-4 h-4 text-[#34d2e0]" />
-              <span className="text-[#f5f5f5]/80">Your Personal DSA Knowledge Base</span>
+              <span className="text-[#f5f5f5]/80">Yourasdasd Personal DSA Knowledge Base</span>
             </div>
             
             {/* Main Headline */}
