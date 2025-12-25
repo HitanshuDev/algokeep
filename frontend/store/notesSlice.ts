@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const API = process.env.NEXT_PUBLIC_API_URL;
+// const API = process.env.NEXT_PUBLIC_API_URL;
 
-if (!API) {
-  throw new Error("NEXT_PUBLIC_API_URL is missing");
-}
+// if (!API) {
+//   throw new Error("NEXT_PUBLIC_API_URL is missing");
+// }
 
 export interface Note {
   _id: string;
@@ -48,7 +48,7 @@ const initialState: NotesState = {
 export const fetchNotes = createAsyncThunk(
   "notes/fetchNotes",
   async (token: string) => {
-    const res = await fetch(`${API}/api/notes`, {
+    const res = await fetch(`/api/notes`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -61,7 +61,7 @@ export const fetchNotes = createAsyncThunk(
 export const addNote = createAsyncThunk(
   "notes/addNote",
   async ({ note, token }: { note: any; token: string }) => {
-    const res = await fetch(`${API}/api/notes`, {
+    const res = await fetch(`/api/notes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -79,7 +79,7 @@ export const addNote = createAsyncThunk(
 export const deleteNote = createAsyncThunk(
   "notes/deleteNote",
   async ({ noteId, token }: { noteId: string; token: string }) => {
-    const res = await fetch(`${API}/api/notes/${noteId}`, {
+    const res = await fetch(`/api/notes/${noteId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -105,7 +105,7 @@ export const updateNote = createAsyncThunk(
     token: string;
   }) => {
     // console.log(updatedData);
-    const res = await fetch(`${API}/api/notes/${noteId}`, {
+    const res = await fetch(`/api/notes/${noteId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
