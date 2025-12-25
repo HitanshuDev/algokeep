@@ -6,10 +6,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 //   throw new Error("NEXT_PUBLIC_API_URL is missing");
 // }
 
-if (!API) {
-  throw new Error("NEXT_PUBLIC_API_URL is missing");
-}
-
 export interface Note {
   _id: string;
   title: string;
