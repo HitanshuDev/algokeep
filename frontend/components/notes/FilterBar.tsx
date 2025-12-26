@@ -15,12 +15,12 @@ export function FilterBar({ viewMode, onViewModeChange }: FilterBarProps) {
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
       {/* Left: Filters */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2 text-muted-foreground">
+        {/* <div className="flex items-center gap-2 text-muted-foreground">
           <Filter className="w-4 h-4" />
           <span className="text-sm">Filters:</span>
-        </div>
+        </div> */}
 
-        <select
+        {/* <select
           value={filterDifficulty}
           onChange={(e) => setFilterDifficulty(e.target.value)}
           className="px-3 py-1.5 bg-secondary border border-border/50 rounded-lg
@@ -32,9 +32,9 @@ export function FilterBar({ viewMode, onViewModeChange }: FilterBarProps) {
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
           <option value="hard">Hard</option>
-        </select>
+        </select> */}
 
-        <select
+        {/* <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
           className="px-3 py-1.5 bg-secondary border border-border/50 rounded-lg
@@ -46,7 +46,7 @@ export function FilterBar({ viewMode, onViewModeChange }: FilterBarProps) {
           <option value="alpha">Alphabetical</option>
           <option value="difficulty">By Difficulty</option>
           <option value="language">By Language</option>
-        </select>
+        </select> */}
       </div>
 
       {/* Right: View Mode Toggle */}
