@@ -80,10 +80,10 @@ export const SignInForm: React.FC = () => {
   //   }
   // };
 
-  const handleGithubSignIn = () => {
-    console.log('Sign in with GitHub');
-    // Handle GitHub OAuth here
-  };
+  // const handleGithubSignIn = () => {
+  //   console.log('Sign in with GitHub');
+  //   // Handle GitHub OAuth here
+  // };
 
   return (
     <div className="w-full max-w-md animate-fade-in">
@@ -162,17 +162,17 @@ export const SignInForm: React.FC = () => {
           </Button>
 
           {/* Divider */}
-          <div className="relative my-6">
+          {/* <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-[#333333]"></div>
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-4 bg-[#211f1e] text-[#666666]">or continue with</span>
             </div>
-          </div>
+          </div> */}
 
           {/* GitHub Sign In */}
-          <Button
+          {/* <Button
             type="button"
             variant="outline"
             fullWidth
@@ -180,7 +180,7 @@ export const SignInForm: React.FC = () => {
             onClick={handleGithubSignIn}
           >
             Sign in with GitHub
-          </Button>
+          </Button> */}
         </form>
       </div>
 
