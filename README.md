@@ -143,7 +143,7 @@ algokeep/
 ### 1. Clone the Repository
 
 ```sh
-git clone <your-repo-url>
+git clone https://github.com/HitanshuDev/algokeep
 cd algokeep
 ```
 
