@@ -298,7 +298,6 @@ docker compose -f docker-compose.dev.yml up --build backend
 | `POST` | `/api/auth/signup` | Register new user |
 | `POST` | `/api/auth/login` | Login user |
 | `POST` | `/api/auth/logout` | Logout user |
-| `GET` | `/api/auth/me` | Get current user (requires auth) |
 
 ### Notes
 
@@ -309,7 +308,6 @@ docker compose -f docker-compose.dev.yml up --build backend
 | `GET` | `/api/notes/:id` | Get specific note |
 | `PUT` | `/api/notes/:id` | Update note |
 | `DELETE` | `/api/notes/:id` | Delete note |
-| `PATCH` | `/api/notes/:id/favorite` | Toggle favorite status |
 
 ### Query Parameters (Notes)
 
