@@ -415,7 +415,27 @@ export const selectFilteredNotes = createSelector(
 
 ### Platform: AWS EC2 (Ubuntu 22.04)
 
-#### Step 1: Prepare Docker Images
+### CI/CD: Automatic Deploys on Push
+
+Pushing to `master` triggers [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which:
+1. Builds the `backend` image (tagged `v2` and the commit SHA) and `frontend` image (tagged `latest` and the commit SHA) and pushes them to Docker Hub.
+2. SSHes into the EC2 instance and runs `docker compose pull && docker compose up -d`.
+
+**One-time setup required in the GitHub repo (Settings → Secrets and variables → Actions):**
+
+| Secret | Value |
+|--------|-------|
+| `DOCKERHUB_USERNAME` | Docker Hub username |
+| `DOCKERHUB_TOKEN` | Docker Hub access token (not your password) |
+| `EC2_HOST` | EC2 public IP or DNS name |
+| `EC2_USER` | SSH user (e.g. `ubuntu`) |
+| `EC2_SSH_KEY` | Private key for a dedicated deploy key added to the EC2 instance's `~/.ssh/authorized_keys` |
+
+The EC2 instance also needs a `DOCKERHUB_USERNAME` value in its shell environment (or a `.env` next to `docker-compose.yml`) so `docker compose pull` resolves the correct image names.
+
+The manual steps below remain available as a fallback for one-off/manual deploys.
+
+#### Step 1: Prepare Docker Images (manual fallback)
 
 ```sh
 # Build images locally
@@ -427,7 +447,7 @@ docker push yourusername/algokeep-backend:1.0.0
 docker push yourusername/algokeep-frontend:1.0.0
 ```
 
-#### Step 2: EC2 Instance Setup
+#### Step 2: EC2 Instance Setup (one-time)
 
 ```sh
 # SSH into EC2
@@ -443,7 +463,7 @@ sudo usermod -aG docker $USER
 mkdir -p ~/algokeep && cd ~/algokeep
 ```
 
-#### Step 3: Pull & Deploy
+#### Step 3: Pull & Deploy (manual fallback)
 
 ```sh
 # Create docker-compose.yml with production config
