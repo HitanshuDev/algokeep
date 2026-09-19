@@ -138,14 +138,13 @@ export const SignUpForm: React.FC = () => {
       {/* Glassmorphic Card */}
       <div className="bg-[#211f1e]/80 backdrop-blur-xl border border-[#333333]/50 rounded-2xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email Input */}
+          {/* Name Input */}
           <Input
-            type="name"
+            type="text"
             label="Name"
             placeholder="Enter your name"
-            value={email}
+            value={name}
             onChange={(e) => setName(e.target.value)}
-            error={errors.email}
             icon={<Mail size={18} />}
           />
 
