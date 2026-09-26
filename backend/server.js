@@ -10,20 +10,19 @@ import authRoutes from './routes/authRoutes.js';
 import geminiapi from './routes/geminiapi.js';
 
 const app = express();
+const allowedOrigins = [
+  "https://algokeep.hitanshukhandelwal.com",
+  "https://algo-keep-dsa-notes-manager.vercel.app",
+  "http://localhost:3000",
+  "http://frontend:3000",
+  ...(process.env.CORS_ORIGIN?.split(',').map(o => o.trim()).filter(Boolean) ?? [])
+];
+
 app.use(cors({
   origin: function(origin, callback) {
-    const allowedOrigins = [
-      "https://algo-keep-dsa-notes-manager.vercel.app", // production frontend
-      "http://localhost:3000",
-      "http://frontend:3000"
-    ];
     // Allow requests with no origin (like curl, Postman)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    callback(null, false);
   },
   credentials: true
 }));
