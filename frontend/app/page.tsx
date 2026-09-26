@@ -3,8 +3,7 @@ import { Navbar } from '@/components/Navbar';
 import { HeroSection } from '@/components/HeroSection';
 import { FeaturesSection } from '@/components/FeaturesSection';
 import { InterfacePreviewSection } from '@/components/InterfacePreviewSection';
-import { WhyAlgoKeepSection } from '@/components/WhyAlgoKeepSection';
-import { TestimonialsSection } from '@/components/TestimonialsSection';
+import { HowItsBuiltSection } from '@/components/HowItsBuiltSection';
 import { CTASection } from '@/components/CTASection';
 import { Footer } from '@/components/Footer';
 
@@ -16,8 +15,7 @@ export default function App() {
         <HeroSection />
         <FeaturesSection />
         <InterfacePreviewSection />
-        <WhyAlgoKeepSection />
-        <TestimonialsSection />
+        <HowItsBuiltSection />
         <CTASection />
       </main>
       <Footer />
