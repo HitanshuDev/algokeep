@@ -1,72 +1,92 @@
 import React from 'react';
-import { Code2, Github, Twitter, Linkedin, Mail } from 'lucide-react';
+import { Code2, Github, Linkedin } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="bg-[#211f1e] border-t border-[#34d2e0]/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Brand */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-gradient-cyan-teal flex items-center justify-center">
-                <Code2 className="w-6 h-6 text-[#000000]" />
+    <footer className="border-t border-white/[0.07] bg-[#000000]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+        <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-xs">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-cyan-teal">
+                <Code2 className="h-4.5 w-4.5 text-black" />
               </div>
-              <span className="text-[#f5f5f5]">AlgoKeep</span>
+              <span className="text-[15px] font-semibold tracking-tight text-[#f5f5f5]">
+                AlgoKeep
+              </span>
             </div>
-            <p className="text-[#f5f5f5]/60">Your central hub for DSA problem solutions.</p>
+            <p className="mt-4 text-[13.5px] leading-relaxed text-[#f5f5f5]/45">
+              A DSA notes manager built and deployed end to end — Next.js, Express, MongoDB,
+              Docker, and a GitHub Actions pipeline onto AWS EC2.
+            </p>
           </div>
-          
-          {/* Product */}
-          <div>
-            <h4 className="text-[#f5f5f5] mb-4">Product</h4>
-            <ul className="space-y-2">
-              <li><a href="#features" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">Features</a></li>
-              <li><a href="#preview" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">Preview</a></li>
-              <li><a href="#pricing" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">Pricing</a></li>
-              <li><a href="#roadmap" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">Roadmap</a></li>
-            </ul>
-          </div>
-          
-          {/* Company */}
-          <div>
-            <h4 className="text-[#f5f5f5] mb-4">Company</h4>
-            <ul className="space-y-2">
-              <li><a href="#about" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">About</a></li>
-              <li><a href="#blog" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">Blog</a></li>
-              <li><a href="#careers" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">Careers</a></li>
-              <li><a href="#contact" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">Contact</a></li>
-            </ul>
-          </div>
-          
-          {/* Legal */}
-          <div>
-            <h4 className="text-[#f5f5f5] mb-4">Legal</h4>
-            <ul className="space-y-2">
-              <li><a href="#privacy" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">Privacy Policy</a></li>
-              <li><a href="#terms" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">Terms of Service</a></li>
-              <li><a href="#cookies" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">Cookie Policy</a></li>
-            </ul>
+
+          <div className="flex gap-14">
+            <div>
+              <h4 className="eyebrow text-[10px] text-[#f5f5f5]/35">Product</h4>
+              <ul className="mt-4 space-y-2.5">
+                {[
+                  ['#features', 'Features'],
+                  ['#preview', 'Workspace'],
+                  ['#built', 'How it’s built'],
+                ].map(([href, label]) => (
+                  <li key={href}>
+                    <a
+                      href={href}
+                      className="text-[13.5px] text-[#f5f5f5]/55 transition-colors hover:text-[#34d2e0]"
+                    >
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="eyebrow text-[10px] text-[#f5f5f5]/35">Account</h4>
+              <ul className="mt-4 space-y-2.5">
+                {[
+                  ['/login', 'Sign in'],
+                  ['/signup', 'Create account'],
+                ].map(([href, label]) => (
+                  <li key={href}>
+                    <a
+                      href={href}
+                      className="text-[13.5px] text-[#f5f5f5]/55 transition-colors hover:text-[#34d2e0]"
+                    >
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
-        
-        {/* Bottom Bar */}
-        <div className="border-t border-[#34d2e0]/20 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-[#f5f5f5]/60">© 2025 AlgoKeep. All rights reserved.</p>
-          
-          {/* Social Links */}
-          <div className="flex items-center gap-4">
-            <a href="#github" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">
-              <Github className="w-5 h-5" />
+
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/[0.07] pt-7 md:flex-row">
+          <p className="text-[12.5px] text-[#f5f5f5]/35">
+            Built by{' '}
+            <span className="text-[#f5f5f5]/60">Hitanshu Khandelwal</span> · MIT Licensed
+          </p>
+
+          <div className="flex items-center gap-1">
+            <a
+              href="https://github.com/HitanshuDev/algokeep"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub repository"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-[#f5f5f5]/45 transition-colors hover:bg-white/5 hover:text-[#34d2e0]"
+            >
+              <Github className="h-4 w-4" />
             </a>
-            <a href="#twitter" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">
-              <Twitter className="w-5 h-5" />
-            </a>
-            <a href="#linkedin" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">
-              <Linkedin className="w-5 h-5" />
-            </a>
-            <a href="#email" className="text-[#f5f5f5]/60 hover:text-[#34d2e0] transition-colors">
-              <Mail className="w-5 h-5" />
+            <a
+              href="https://www.linkedin.com/in/hitanshu-khandelwal"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn profile"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-[#f5f5f5]/45 transition-colors hover:bg-white/5 hover:text-[#34d2e0]"
+            >
+              <Linkedin className="h-4 w-4" />
             </a>
           </div>
         </div>

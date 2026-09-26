@@ -1,57 +1,106 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Menu, X, Code2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Menu, X, Code2, Github } from 'lucide-react';
 import { Button } from './Button';
+
+const links = [
+  { href: '#features', label: 'Features' },
+  { href: '#preview', label: 'Workspace' },
+  { href: '#built', label: 'How it’s built' },
+];
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-morphism border-b border-[#34d2e0]/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-lg bg-gradient-cyan-teal flex items-center justify-center">
-              <Code2 className="w-6 h-6 text-[#000000]" />
+    <nav
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? 'border-b border-white/[0.07] bg-black/70 backdrop-blur-xl'
+          : 'border-b border-transparent bg-transparent'
+      }`}
+    >
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <a href="#" className="group flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-cyan-teal transition-transform duration-300 group-hover:scale-105">
+              <Code2 className="h-4.5 w-4.5 text-black" />
             </div>
-            <span className="text-[#f5f5f5]">AlgoKeep</span>
+            <span className="text-[15px] font-semibold tracking-tight text-[#f5f5f5]">
+              AlgoKeep
+            </span>
+          </a>
+
+          <div className="hidden items-center gap-8 md:flex">
+            {links.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="text-[13.5px] text-[#f5f5f5]/60 transition-colors hover:text-[#34d2e0]"
+              >
+                {l.label}
+              </a>
+            ))}
           </div>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-[#f5f5f5]/80 hover:text-[#34d2e0] transition-colors">Features</a>
-            <a href="#preview" className="text-[#f5f5f5]/80 hover:text-[#34d2e0] transition-colors">Preview</a>
-            <a href="#why" className="text-[#f5f5f5]/80 hover:text-[#34d2e0] transition-colors">Why AlgoKeep</a>
-            <a href="#testimonials" className="text-[#f5f5f5]/80 hover:text-[#34d2e0] transition-colors">Testimonials</a>
+
+          <div className="hidden items-center gap-2 md:flex">
+            <a
+              href="https://github.com/HitanshuDev/algokeep"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-[#f5f5f5]/55 transition-colors hover:bg-white/5 hover:text-[#f5f5f5]"
+            >
+              <Github className="h-4 w-4" />
+            </a>
+            <a
+              href="/login"
+              className="rounded-lg px-3 py-2 text-[13.5px] text-[#f5f5f5]/75 transition-colors hover:text-[#f5f5f5]"
+            >
+              Sign in
+            </a>
+            <Button href="/signup" variant="tertiary" size="sm" className="text-[13.5px]">
+              Get started
+            </Button>
           </div>
-          
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-4">
-            <Button href='/login' variant="outline" size="sm">Sign In</Button>
-            <Button variant="tertiary" size="sm">Get Started</Button>
-          </div>
-          
-          {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden text-[#34d2e0]"
+
+          <button
+            className="text-[#34d2e0] md:hidden"
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
-        
-        {/* Mobile Menu */}
+
         {isMenuOpen && (
-          <div className="md:hidden py-4 space-y-4">
-            <a href="#features" className="block text-[#f5f5f5]/80 hover:text-[#34d2e0] transition-colors">Features</a>
-            <a href="#preview" className="block text-[#f5f5f5]/80 hover:text-[#34d2e0] transition-colors">Preview</a>
-            <a href="#why" className="block text-[#f5f5f5]/80 hover:text-[#34d2e0] transition-colors">Why AlgoKeep</a>
-            <a href="#testimonials" className="block text-[#f5f5f5]/80 hover:text-[#34d2e0] transition-colors">Testimonials</a>
-            <div className="flex flex-col gap-2 pt-4">
-              <Button variant="outline" size="sm">Sign In</Button>
-              <Button variant="tertiary" size="sm">Get Started</Button>
+          <div className="space-y-1 border-t border-white/[0.07] py-4 md:hidden">
+            {links.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={() => setIsMenuOpen(false)}
+                className="block rounded-lg px-2 py-2.5 text-[14px] text-[#f5f5f5]/70 hover:bg-white/5 hover:text-[#34d2e0]"
+              >
+                {l.label}
+              </a>
+            ))}
+            <div className="flex flex-col gap-2 pt-3">
+              <Button href="/login" variant="secondary" size="sm">
+                Sign in
+              </Button>
+              <Button href="/signup" variant="tertiary" size="sm">
+                Get started
+              </Button>
             </div>
           </div>
         )}
