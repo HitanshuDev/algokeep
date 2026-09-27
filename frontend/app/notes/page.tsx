@@ -10,6 +10,7 @@ import { NotesGrid } from '@/components/notes/NotesGrid';
 import { NoteDetailView } from '@/components/notes/NoteDetailView';
 import { MobileBottomNav } from '@/components/notes/MobileBottomNav';
 import { AddNoteModal, NoteFormData } from '@/components/notes/AddNoteModal';
+import { Pagination } from '@/components/notes/Pagination';
 
 import { fetchNotes, addNote } from '@/store/notesSlice';
 import type { RootState, AppDispatch } from '@/store';
@@ -24,6 +25,8 @@ export default function App() {
   const [mobileTab, setMobileTab] = useState('all');
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   console.log(typeof setIsAddNoteModalOpen);
+  const [page, setPage] = useState(1);
+  const NOTES_PER_PAGE = 15;
 
   // ---------------- REDUX ----------------
   const dispatch = useDispatch<AppDispatch>();
@@ -33,6 +36,13 @@ export default function App() {
   );
   
   const filteredNotes = useSelector(filteredNoteSelector);
+  const filters = useSelector((state: RootState) => state.notes.filters);
+
+  const totalPages = Math.max(1, Math.ceil(filteredNotes.length / NOTES_PER_PAGE));
+  const paginatedNotes = filteredNotes.slice(
+    (page - 1) * NOTES_PER_PAGE,
+    page * NOTES_PER_PAGE
+  );
 
   // ---------------- AUTH ----------------
   const token =
@@ -43,6 +53,16 @@ export default function App() {
     if (!token) return;
     dispatch(fetchNotes(token));
   }, [token, dispatch]);
+
+  // Reset to page 1 whenever the filtered set changes (new search/topic/etc.)
+  useEffect(() => {
+    setPage(1);
+  }, [filters.search, filters.topic, filters.language, filters.isFavourite]);
+
+  // Clamp page if notes shrink (e.g. after a delete) below the current page
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   // ---------------- SAVE NOTE ----------------
   const handleSaveNote = (note: NoteFormData) => {
@@ -97,11 +117,14 @@ export default function App() {
 
             {/* Notes Grid */}
             {!loading && !error && (
-              <NotesGrid
-              viewMode={viewMode}
-                notes={filteredNotes}
-                onNoteClick={(note) => setSelectedNoteId(note._id)}
-              />
+              <>
+                <NotesGrid
+                  viewMode={viewMode}
+                  notes={paginatedNotes}
+                  onNoteClick={(note) => setSelectedNoteId(note._id)}
+                />
+                <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+              </>
             )}
           </div>
         </main>
