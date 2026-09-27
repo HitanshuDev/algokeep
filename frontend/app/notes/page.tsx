@@ -12,7 +12,7 @@ import { MobileBottomNav } from '@/components/notes/MobileBottomNav';
 import { AddNoteModal, NoteFormData } from '@/components/notes/AddNoteModal';
 import { Pagination } from '@/components/notes/Pagination';
 
-import { fetchNotes, addNote } from '@/store/notesSlice';
+import { fetchNotes, addNote, NOTES_PER_PAGE } from '@/store/notesSlice';
 import type { RootState, AppDispatch } from '@/store';
 import { filteredNoteSelector } from '@/store/noteSelector';
 
@@ -26,40 +26,37 @@ export default function App() {
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   console.log(typeof setIsAddNoteModalOpen);
   const [page, setPage] = useState(1);
-  const NOTES_PER_PAGE = 15;
 
   // ---------------- REDUX ----------------
   const dispatch = useDispatch<AppDispatch>();
 
-  const { notes, loading, error } = useSelector(
+  const { loading, error, total } = useSelector(
     (state: RootState) => state.notes
   );
-  
-  const filteredNotes = useSelector(filteredNoteSelector);
-  const filters = useSelector((state: RootState) => state.notes.filters);
 
-  const totalPages = Math.max(1, Math.ceil(filteredNotes.length / NOTES_PER_PAGE));
-  const paginatedNotes = filteredNotes.slice(
-    (page - 1) * NOTES_PER_PAGE,
-    page * NOTES_PER_PAGE
-  );
+  // Filters (search/topic/language/favourites) apply only within the
+  // currently loaded page — pagination itself is done at the DB level via
+  // limit/offset, not by loading everything and slicing client-side.
+  const filteredNotes = useSelector(filteredNoteSelector);
+
+  const totalPages = Math.max(1, Math.ceil(total / NOTES_PER_PAGE));
 
   // ---------------- AUTH ----------------
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
   // ---------------- FETCH NOTES ----------------
-  useEffect(() => {
+  const loadPage = (pageNum: number) => {
     if (!token) return;
-    dispatch(fetchNotes(token));
-  }, [token, dispatch]);
+    dispatch(fetchNotes({ token, limit: NOTES_PER_PAGE, offset: (pageNum - 1) * NOTES_PER_PAGE }));
+  };
 
-  // Reset to page 1 whenever the filtered set changes (new search/topic/etc.)
   useEffect(() => {
-    setPage(1);
-  }, [filters.search, filters.topic, filters.language, filters.isFavourite]);
+    loadPage(page);
+  }, [token, page, dispatch]);
 
-  // Clamp page if notes shrink (e.g. after a delete) below the current page
+  // Clamp page if it's now out of range (e.g. after deleting the last note
+  // on the last page) and re-fetch.
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
@@ -68,6 +65,17 @@ export default function App() {
   const handleSaveNote = (note: NoteFormData) => {
     if (!token) return;
     dispatch(addNote({ note, token }));
+  };
+
+  // New notes sort to the top on the server (newest first), so always jump
+  // back to page 1 to show it — refetch directly if already there, since
+  // setPage(1) wouldn't trigger the effect if the page number is unchanged.
+  const handleNoteAdded = () => {
+    if (page === 1) {
+      loadPage(1);
+    } else {
+      setPage(1);
+    }
   };
 
   // ---------------- RENDER ----------------
@@ -120,7 +128,7 @@ export default function App() {
               <>
                 <NotesGrid
                   viewMode={viewMode}
-                  notes={paginatedNotes}
+                  notes={filteredNotes}
                   onNoteClick={(note) => setSelectedNoteId(note._id)}
                 />
                 <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
@@ -146,6 +154,7 @@ export default function App() {
       <AddNoteModal
         isOpen={isAddNoteModalOpen}
         onClose={() => setIsAddNoteModalOpen(false)}
+        onNoteAdded={handleNoteAdded}
       />
     </div>
   );

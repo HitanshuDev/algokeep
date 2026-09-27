@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+export const NOTES_PER_PAGE = 15;
+
 // const API = process.env.NEXT_PUBLIC_API_URL;
 
 // if (!API) {
@@ -23,6 +25,7 @@ export interface Note {
 
 interface NotesState {
   notes: Note[];
+  total: number;
   loading: boolean;
   error: string | null;
   filters: {
@@ -35,6 +38,7 @@ interface NotesState {
 
 const initialState: NotesState = {
   notes: [],
+  total: 0,
   loading: false,
   error: null,
   filters: {
@@ -47,14 +51,22 @@ const initialState: NotesState = {
 
 export const fetchNotes = createAsyncThunk(
   "notes/fetchNotes",
-  async (token: string) => {
-    const res = await fetch(`/api/notes`, {
+  async ({
+    token,
+    limit = 15,
+    offset = 0,
+  }: {
+    token: string;
+    limit?: number;
+    offset?: number;
+  }) => {
+    const res = await fetch(`/api/notes?limit=${limit}&offset=${offset}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.message);
-    return data.notes;
+    return data; // { notes, total, limit, offset }
   }
 );
 
@@ -154,7 +166,8 @@ const notesSlice = createSlice({
       })
       .addCase(fetchNotes.fulfilled, (state, action) => {
         state.loading = false;
-        state.notes = action.payload;
+        state.notes = action.payload.notes;
+        state.total = action.payload.total;
       })
       .addCase(fetchNotes.rejected, (state, action) => {
         state.loading = false;
@@ -162,8 +175,12 @@ const notesSlice = createSlice({
       })
 
       // delete
+      // Removes the note from the currently loaded page and decrements the
+      // known total. The page itself may now be short by one until the next
+      // fetchNotes() call re-pages from the server.
       .addCase(deleteNote.fulfilled, (state, action) => {
         state.notes = state.notes.filter((note) => note._id !== action.payload);
+        state.total = Math.max(0, state.total - 1);
       })
       // update
       .addCase(updateNote.fulfilled, (state, action) => {
@@ -177,8 +194,11 @@ const notesSlice = createSlice({
       })
 
       // add
+      // Only bumps the total; the new note belongs wherever the server's
+      // sort order places it, which may not be the page currently in view.
+      // The caller re-fetches the relevant page to actually display it.
       .addCase(addNote.fulfilled, (state, action) => {
-        state.notes.unshift(action.payload);
+        state.total += 1;
       });
   },
 });

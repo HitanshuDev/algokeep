@@ -55,11 +55,21 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-// Get all notes for a logged-in user
+// Get a page of notes for a logged-in user
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const notes = await Note.find({ user: req.user });
-    res.status(200).json({ notes });
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 15, 1), 100);
+    const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
+
+    const [notes, total] = await Promise.all([
+      Note.find({ user: req.user })
+        .sort({ createdAt: -1 })
+        .skip(offset)
+        .limit(limit),
+      Note.countDocuments({ user: req.user }),
+    ]);
+
+    res.status(200).json({ notes, total, limit, offset });
   } catch (err) {
     console.error("Error fetching notes:", err);
     res.status(500).json({ message: "Server error" });
