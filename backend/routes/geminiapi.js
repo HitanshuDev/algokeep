@@ -1,5 +1,4 @@
 import express from 'express';
-// import fetch from 'node-fetch';
 const router = express.Router();
 
 router.post('/', async (req, res) => {
@@ -10,7 +9,7 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + process.env.GEMINI_API_KEY, {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=' + process.env.GEMINI_API_KEY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -20,8 +19,16 @@ router.post('/', async (req, res) => {
 
     const data = await response.json();
 
+    if (!response.ok) {
+      console.error('Gemini API error:', data.error);
+      return res.status(502).json({ message: data.error?.message || 'Gemini API request failed' });
+    }
 
-    const algorithm = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Algorithm not found';
+    const algorithm = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!algorithm) {
+      console.error('Gemini API returned no candidates:', JSON.stringify(data));
+      return res.status(502).json({ message: 'Gemini did not return an algorithm for this code' });
+    }
 
     res.status(200).json({ algorithm });
 

@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { X, Code, FileText, Hash, Clock, Database } from 'lucide-react';
+import { X, Code, FileText, Hash, Clock, Database, Sparkles, Loader2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '@/store';
 import { addNote } from '@/store/notesSlice';
@@ -56,6 +56,8 @@ export function AddNoteModal({ isOpen, onClose, onNoteAdded }: AddNoteModalProps
   const [touched, setTouched] = useState<Partial<Record<keyof NoteFormData, boolean>>>({});
   const dispatch = useDispatch<AppDispatch>();
 const [token, setToken] = useState<string | null>(null);
+const [isGenerating, setIsGenerating] = useState(false);
+const [generateError, setGenerateError] = useState('');
 
 useEffect(() => {
   setToken(localStorage.getItem('token'));
@@ -97,6 +99,37 @@ useEffect(() => {
   const handleBlur = (field: keyof NoteFormData) => {
     setTouched(prev => ({ ...prev, [field]: true }));
     validateField(field, formData[field]);
+  };
+
+  const handleGenerateAlgorithm = async () => {
+    if (!formData.code.trim() || isGenerating) return;
+
+    if (
+      formData.algorithm.trim() &&
+      !window.confirm('This will replace your existing Algorithm/Approach text. Continue?')
+    ) {
+      return;
+    }
+
+    setIsGenerating(true);
+    setGenerateError('');
+
+    try {
+      const res = await fetch('/api/generate-algorithm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: formData.code }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to generate algorithm');
+
+      handleChange('algorithm', data.algorithm);
+    } catch (err) {
+      setGenerateError(err instanceof Error ? err.message : 'Failed to generate algorithm');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const validateField = (field: keyof NoteFormData, value: string) => {
@@ -406,36 +439,6 @@ useEffect(() => {
                 </div>
               </div>
 
-              {/* Algorithm Section */}
-              <div className="space-y-4 pt-4 border-t border-border/30">
-                <div className="flex items-center gap-2 text-accent">
-                  <Hash className="w-4 h-4" />
-                  <h3>Algorithm & Approach</h3>
-                </div>
-
-                <div>
-                  <label htmlFor="approach" className="block text-sm text-foreground mb-2">
-                    Algorithm / Approach Explanation <span className="text-destructive">*</span>
-                  </label>
-                  <textarea
-                    id="approach"
-                    value={formData.algorithm}
-                    onChange={(e) => handleChange('algorithm', e.target.value)}
-                    onBlur={() => handleBlur('algorithm')}
-                    placeholder="Explain your approach, key insights, and steps to solve the problem..."
-                    rows={5}
-                    className={`w-full px-4 py-2.5 bg-input-background rounded-lg border
-                             ${touched.algorithm && errors.algorithm ? 'border-destructive' : 'border-border/50'}
-                             text-foreground placeholder:text-muted-foreground
-                             focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent
-                             transition-all resize-none`}
-                  />
-                  {touched.algorithm && errors.algorithm && (
-                    <p className="mt-1 text-sm text-destructive">{errors.algorithm}</p>
-                  )}
-                </div>
-              </div>
-
               {/* Code Section */}
               <div className="space-y-4 pt-4 border-t border-border/30">
                 <div className="flex items-center gap-2 text-accent">
@@ -466,6 +469,59 @@ useEffect(() => {
                       <p className="mt-1 text-sm text-destructive">{errors.code}</p>
                     )}
                   </div>
+                </div>
+              </div>
+
+              {/* Algorithm Section */}
+              <div className="space-y-4 pt-4 border-t border-border/30">
+                <div className="flex items-center justify-between text-accent">
+                  <div className="flex items-center gap-2">
+                    <Hash className="w-4 h-4" />
+                    <h3>Algorithm & Approach</h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleGenerateAlgorithm}
+                    disabled={!formData.code.trim() || isGenerating}
+                    title={!formData.code.trim() ? 'Paste your solution code first' : undefined}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-all
+                             ${!formData.code.trim() || isGenerating
+                               ? 'border-border/50 text-muted-foreground cursor-not-allowed'
+                               : 'border-accent/50 text-accent hover:bg-accent/10 hover:border-accent'
+                             }`}
+                  >
+                    {isGenerating ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-3.5 h-3.5" />
+                    )}
+                    {isGenerating ? 'Generating...' : 'Generate with AI'}
+                  </button>
+                </div>
+
+                <div>
+                  <label htmlFor="approach" className="block text-sm text-foreground mb-2">
+                    Algorithm / Approach Explanation <span className="text-destructive">*</span>
+                  </label>
+                  <textarea
+                    id="approach"
+                    value={formData.algorithm}
+                    onChange={(e) => handleChange('algorithm', e.target.value)}
+                    onBlur={() => handleBlur('algorithm')}
+                    placeholder="Explain your approach, key insights, and steps to solve the problem... or paste code above and click Generate with AI"
+                    rows={5}
+                    className={`w-full px-4 py-2.5 bg-input-background rounded-lg border
+                             ${touched.algorithm && errors.algorithm ? 'border-destructive' : 'border-border/50'}
+                             text-foreground placeholder:text-muted-foreground
+                             focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent
+                             transition-all resize-none`}
+                  />
+                  {touched.algorithm && errors.algorithm && (
+                    <p className="mt-1 text-sm text-destructive">{errors.algorithm}</p>
+                  )}
+                  {generateError && (
+                    <p className="mt-1 text-sm text-destructive">{generateError}</p>
+                  )}
                 </div>
               </div>
 
