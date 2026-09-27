@@ -1,8 +1,8 @@
-import { Search, Settings, Menu } from 'lucide-react';
-import { useState , useEffect } from 'react';
-import { AppDispatch } from '@/store';
-import { useDispatch } from 'react-redux';
-import { setSearchFilter } from '@/store/notesSlice';
+import { Search, Settings, Menu } from "lucide-react";
+import { useState, useEffect } from "react";
+import { AppDispatch } from "@/store";
+import { useDispatch } from "react-redux";
+import { setSearchFilter } from "@/store/notesSlice";
 interface NavbarProps {
   onMenuClick: () => void;
 }
@@ -12,37 +12,38 @@ const getInitials = (name?: string | null) => {
   const parts = name.trim().split(" ");
   if (parts.length === 1) return parts[0][0].toUpperCase();
 
-  return (
-    parts[0][0].toUpperCase() +
-    parts[parts.length - 1][0].toUpperCase()
-  );
+  return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
 };
 
-
 export function Navbar({ onMenuClick }: NavbarProps) {
-
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
-    try {
-      const user = JSON.parse(storedUser);
-      setUserName(user.name);
-    } catch {
-      setUserName(null);
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        setUserName(user.name);
+      } catch {
+        setUserName(null);
+      }
     }
-  }
-}, []);
+  }, []);
 
   const dispatch = useDispatch<AppDispatch>();
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(setSearchFilter(searchQuery));
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery, dispatch]);
+
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
-    dispatch(setSearchFilter(event.target.value));
   };
-
-  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <nav className="sticky top-0 z-50 glass border-b border-border/50">
@@ -56,7 +57,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
           >
             <Menu className="w-5 h-5 text-foreground" />
           </button>
-          
+
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
               <span className="text-background font-bold">A</span>
@@ -90,11 +91,15 @@ export function Navbar({ onMenuClick }: NavbarProps) {
           >
             <Settings className="w-5 h-5 text-foreground" />
           </button>
-          
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-accent 
+
+          <div
+            className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-accent 
                         flex items-center justify-center cursor-pointer
-                        hover:shadow-lg hover:shadow-accent/20 transition-all">
-            <span className="text-sm text-background">{getInitials(userName)}</span>
+                        hover:shadow-lg hover:shadow-accent/20 transition-all"
+          >
+            <span className="text-sm text-background">
+              {getInitials(userName)}
+            </span>
           </div>
         </div>
       </div>

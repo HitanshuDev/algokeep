@@ -1,28 +1,28 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import { Navbar } from '@/components/notes/Navbar';
-import { Sidebar } from '@/components/notes/Sidebar';
-import { FilterBar } from '@/components/notes/FilterBar';
-import { NotesGrid } from '@/components/notes/NotesGrid';
-import { NoteDetailView } from '@/components/notes/NoteDetailView';
-import { MobileBottomNav } from '@/components/notes/MobileBottomNav';
-import { AddNoteModal, NoteFormData } from '@/components/notes/AddNoteModal';
-import { Pagination } from '@/components/notes/Pagination';
+import { Navbar } from "@/components/notes/Navbar";
+import { Sidebar } from "@/components/notes/Sidebar";
+import { FilterBar } from "@/components/notes/FilterBar";
+import { NotesGrid } from "@/components/notes/NotesGrid";
+import { NoteDetailView } from "@/components/notes/NoteDetailView";
+import { MobileBottomNav } from "@/components/notes/MobileBottomNav";
+import { AddNoteModal, NoteFormData } from "@/components/notes/AddNoteModal";
+import { Pagination } from "@/components/notes/Pagination";
 
-import { fetchNotes, addNote, NOTES_PER_PAGE } from '@/store/notesSlice';
-import type { RootState, AppDispatch } from '@/store';
-import { filteredNoteSelector } from '@/store/noteSelector';
+import { fetchNotes, addNote, NOTES_PER_PAGE } from "@/store/notesSlice";
+import type { RootState, AppDispatch } from "@/store";
+import { filteredNoteSelector } from "@/store/noteSelector";
 
 export default function App() {
   // ---------------- UI STATE (LOCAL) ----------------
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   // const [selectedNote, setSelectedNote] = useState<any | null>(null);
   const [selectedNoteId, setSelectedNoteId] = useState<any | null>(null);
-  const [mobileTab, setMobileTab] = useState('all');
+  const [mobileTab, setMobileTab] = useState("all");
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   console.log(typeof setIsAddNoteModalOpen);
   const [page, setPage] = useState(1);
@@ -30,30 +30,47 @@ export default function App() {
   // ---------------- REDUX ----------------
   const dispatch = useDispatch<AppDispatch>();
 
-  const { loading, error, total } = useSelector(
-    (state: RootState) => state.notes
+  const { loading, error, total, filters } = useSelector(
+    (state: RootState) => state.notes,
   );
 
-  // Filters (search/topic/language/favourites) apply only within the
-  // currently loaded page — pagination itself is done at the DB level via
-  // limit/offset, not by loading everything and slicing client-side.
+  // Notes are filtered server-side; this selector just returns state.notes.notes.
   const filteredNotes = useSelector(filteredNoteSelector);
 
+  // totalPages is now computed from the *filtered* total returned by the server.
   const totalPages = Math.max(1, Math.ceil(total / NOTES_PER_PAGE));
 
   // ---------------- AUTH ----------------
   const token =
-    typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   // ---------------- FETCH NOTES ----------------
   const loadPage = (pageNum: number) => {
     if (!token) return;
-    dispatch(fetchNotes({ token, limit: NOTES_PER_PAGE, offset: (pageNum - 1) * NOTES_PER_PAGE }));
+    dispatch(
+      fetchNotes({
+        token,
+        limit: NOTES_PER_PAGE,
+        offset: (pageNum - 1) * NOTES_PER_PAGE,
+        // Forward all active filters so the server applies them
+        topic: filters.topic,
+        language: filters.language,
+        isFavourite: filters.isFavourite,
+        search: filters.search,
+      }),
+    );
   };
 
+  // Re-fetch whenever page changes or when token is available for the first time.
   useEffect(() => {
     loadPage(page);
-  }, [token, page, dispatch]);
+  }, [token, page, filters]);
+
+  // When any filter changes, jump back to page 1.
+  // The page change will in turn trigger the effect above to re-fetch.
+  useEffect(() => {
+    setPage(1);
+  }, [filters.topic, filters.language, filters.isFavourite, filters.search]);
 
   // Clamp page if it's now out of range (e.g. after deleting the last note
   // on the last page) and re-fetch.
@@ -104,24 +121,15 @@ export default function App() {
             </div>
 
             {/* Filter Bar */}
-            <FilterBar
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
-            />
+            <FilterBar viewMode={viewMode} onViewModeChange={setViewMode} />
 
             {/* Loading */}
             {loading && (
-              <p className="text-muted-foreground mt-6">
-                Loading notes...
-              </p>
+              <p className="text-muted-foreground mt-6">Loading notes...</p>
             )}
 
             {/* Error */}
-            {error && (
-              <p className="text-destructive mt-6">
-                {error}
-              </p>
-            )}
+            {error && <p className="text-destructive mt-6">{error}</p>}
 
             {/* Notes Grid */}
             {!loading && !error && (
@@ -131,7 +139,11 @@ export default function App() {
                   notes={filteredNotes}
                   onNoteClick={(note) => setSelectedNoteId(note._id)}
                 />
-                <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
               </>
             )}
           </div>
