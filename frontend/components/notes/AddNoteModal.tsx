@@ -35,6 +35,7 @@ const initialFormData: NoteFormData = {
 interface AddNoteModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onNoteAdded?: () => void;
 }
 
 
@@ -49,7 +50,7 @@ const complexityOptions = [
   'O(n!)'
 ];
 
-export function AddNoteModal({ isOpen, onClose }: AddNoteModalProps) {
+export function AddNoteModal({ isOpen, onClose, onNoteAdded }: AddNoteModalProps) {
   const [formData, setFormData] = useState<NoteFormData>(initialFormData);
   const [errors, setErrors] = useState<Partial<Record<keyof NoteFormData, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof NoteFormData, boolean>>>({});
@@ -214,6 +215,7 @@ useEffect(() => {
 
   try {
     await dispatch(addNote({ note: payload, token })).unwrap();
+    onNoteAdded?.();
     onClose();
   } catch (err) {
     console.error('Failed to add note:', err);

@@ -1,10 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// const API = process.env.NEXT_PUBLIC_API_URL;
-
-// if (!API) {
-//   throw new Error("NEXT_PUBLIC_API_URL is missing");
-// }
+export const NOTES_PER_PAGE = 15;
 
 export interface Note {
   _id: string;
@@ -23,6 +19,7 @@ export interface Note {
 
 interface NotesState {
   notes: Note[];
+  total: number;
   loading: boolean;
   error: string | null;
   filters: {
@@ -35,6 +32,7 @@ interface NotesState {
 
 const initialState: NotesState = {
   notes: [],
+  total: 0,
   loading: false,
   error: null,
   filters: {
@@ -47,14 +45,22 @@ const initialState: NotesState = {
 
 export const fetchNotes = createAsyncThunk(
   "notes/fetchNotes",
-  async (token: string) => {
-    const res = await fetch(`/api/notes`, {
+  async ({
+    token,
+    limit = 15,
+    offset = 0,
+  }: {
+    token: string;
+    limit?: number;
+    offset?: number;
+  }) => {
+    const res = await fetch(`/api/notes?limit=${limit}&offset=${offset}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.message);
-    return data.notes;
+    return data; // { notes, total, limit, offset }
   }
 );
 
@@ -154,16 +160,17 @@ const notesSlice = createSlice({
       })
       .addCase(fetchNotes.fulfilled, (state, action) => {
         state.loading = false;
-        state.notes = action.payload;
+        state.notes = action.payload.notes;
+        state.total = action.payload.total;
       })
       .addCase(fetchNotes.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed";
       })
 
-      // delete
       .addCase(deleteNote.fulfilled, (state, action) => {
         state.notes = state.notes.filter((note) => note._id !== action.payload);
+        state.total = Math.max(0, state.total - 1);
       })
       // update
       .addCase(updateNote.fulfilled, (state, action) => {
@@ -176,9 +183,8 @@ const notesSlice = createSlice({
         }
       })
 
-      // add
       .addCase(addNote.fulfilled, (state, action) => {
-        state.notes.unshift(action.payload);
+        state.total += 1;
       });
   },
 });
