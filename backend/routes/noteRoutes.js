@@ -55,18 +55,33 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-// Get a page of notes for a logged-in user
+// Get a page of notes for a logged-in user (supports server-side filtering)
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 15, 1), 100);
+    const limit  = Math.min(Math.max(parseInt(req.query.limit,  10) || 15, 1), 100);
     const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
 
+    const { topic, language, search } = req.query;
+    const isFavourite = req.query.isFavourite === 'true';
+
+    // Build a dynamic filter — only add conditions that were actually supplied
+    const filter = { user: req.user };
+    if (topic)       filter.topic       = topic;
+    if (language)    filter.language    = language;
+    if (isFavourite) filter.isFavourite = true;
+    if (search) {
+      filter.$or = [
+        { title:   { $regex: search, $options: 'i' } },
+        { problem: { $regex: search, $options: 'i' } },
+      ];
+    }
+
     const [notes, total] = await Promise.all([
-      Note.find({ user: req.user })
+      Note.find(filter)
         .sort({ createdAt: -1 })
         .skip(offset)
         .limit(limit),
-      Note.countDocuments({ user: req.user }),
+      Note.countDocuments(filter), // filtered count → accurate totalPages on client
     ]);
 
     res.status(200).json({ notes, total, limit, offset });

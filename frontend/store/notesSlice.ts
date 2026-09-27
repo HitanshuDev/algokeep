@@ -49,12 +49,29 @@ export const fetchNotes = createAsyncThunk(
     token,
     limit = 15,
     offset = 0,
+    topic = "",
+    language = "",
+    isFavourite = false,
+    search = "",
   }: {
     token: string;
     limit?: number;
     offset?: number;
+    topic?: string;
+    language?: string;
+    isFavourite?: boolean;
+    search?: string;
   }) => {
-    const res = await fetch(`/api/notes?limit=${limit}&offset=${offset}`, {
+    const params = new URLSearchParams({
+      limit:  String(limit),
+      offset: String(offset),
+    });
+    if (topic)       params.set("topic",       topic);
+    if (language)    params.set("language",    language);
+    if (isFavourite) params.set("isFavourite", "true");
+    if (search)      params.set("search",      search);
+
+    const res = await fetch(`/api/notes?${params}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
